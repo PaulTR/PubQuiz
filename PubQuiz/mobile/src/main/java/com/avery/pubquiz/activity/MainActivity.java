@@ -1,32 +1,35 @@
-package com.avery.pubquiz;
+package com.avery.pubquiz.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.avery.networking.model.beer.Beer;
-import com.avery.networking.model.beer.BeerList;
-import com.avery.networking.model.beer.BeerResult;
-import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.NearbyDiscoveryCallback;
-import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
-import com.avery.networking.services.AveryNetworkAdapter;
+import com.avery.pubquiz.R;
+import com.avery.pubquiz.fragment.LoadingFragment;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    static final String CONTENT_FRAME_TAG = "contentFrameTag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        insertLoadingFragment();
+
     }
+
+
+    private void insertLoadingFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, new LoadingFragment(), CONTENT_FRAME_TAG).commit();
+    }
+
 
 
     @Override
