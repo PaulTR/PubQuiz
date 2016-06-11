@@ -32,11 +32,13 @@ public class FormTeamsFragment extends Fragment implements NearbyHostCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        /*
         NearbyManager manager = NearbyManager.getInstance();
 
         manager.setNearbyHostCallback(this);
 
         manager.initialize(getActivity());
+        */
     }
 
     @Override
