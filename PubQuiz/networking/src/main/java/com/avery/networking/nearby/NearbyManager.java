@@ -284,7 +284,9 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
                         mIsConnected = true;
                     }
 
-                    mNearbyDiscoveryCallback.onConnectionResponse();
+                    if(mNearbyDiscoveryCallback != null) {
+                        mNearbyDiscoveryCallback.onConnectionResponse();
+                    }
                 } else {
                     if( !mIsHost ) {
                         mIsConnected = false;

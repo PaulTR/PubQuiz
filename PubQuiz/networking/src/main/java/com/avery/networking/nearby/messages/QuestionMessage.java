@@ -1,6 +1,8 @@
 package com.avery.networking.nearby.messages;
 
-public class QuestionMessage extends BaseMessage {
+import java.io.Serializable;
+
+public class QuestionMessage extends BaseMessage implements Serializable {
 
     public String question;
 

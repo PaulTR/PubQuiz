@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
 <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/question_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="36dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center_horizontal"
         android:paddingBottom="42dp"
-        android:textSize="18sp"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:fontFamily="serif"
+        android:textColor="@android:color/white"
         android:text="Buttonz n' shit"/>
 
     <LinearLayout
@@ -42,7 +44,10 @@
                 android:layout_width="172dp"
                 android:layout_height="48dp"
                 android:gravity="center_horizontal"
-                android:text="Attractive aardvarks"/>
+                android:text="Attractive aardvarks"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:fontFamily="serif"
+                android:textColor="@android:color/white"/>
 
         </LinearLayout>
 
@@ -65,7 +70,10 @@
                 android:layout_width="172dp"
                 android:layout_height="48dp"
                 android:gravity="center_horizontal"
-                android:text="Beautiful bayonets\n(for stabbing)"/>
+                android:text="Beautiful bayonets\n(for stabbing)"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:fontFamily="serif"
+                android:textColor="@android:color/white"/>
 
         </LinearLayout>
 
@@ -97,7 +105,10 @@
                 android:layout_width="172dp"
                 android:layout_height="48dp"
                 android:gravity="center_horizontal"
-                android:text="Crusty custard"/>
+                android:text="Crusty custard"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:fontFamily="serif"
+                android:textColor="@android:color/white"/>
 
         </LinearLayout>
 
@@ -109,6 +120,7 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/answer_button_4"
                 android:layout_width="88dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -117,23 +129,17 @@
                 android:text="D"/>
 
             <TextView
+                android:id="@+id/answer_text_4"
                 android:layout_width="172dp"
                 android:layout_height="48dp"
                 android:gravity="center_horizontal"
-                android:text="Dusty dirtbags of doom"/>
+                android:text="Dusty dirtbags of doom"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:fontFamily="serif"
+                android:textColor="@android:color/white"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
 </LinearLayout>
-
-    <Button
-        android:id="@+id/next_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
-
-</RelativeLayout>
