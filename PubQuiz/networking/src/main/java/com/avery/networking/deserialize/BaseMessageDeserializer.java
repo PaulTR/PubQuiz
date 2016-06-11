@@ -28,12 +28,11 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
         if(messageType == "register") {
             RegisterMessage registerMessage = new RegisterMessage();
             registerMessage.teamName = json.getAsJsonObject().get("teamName").getAsString();
-            message = registerMessage;
+            return registerMessage;
         }else {
             message = new BaseMessage();
             message.messageType = messageType;
+            return message;
         }
-
-        return message;
     }
 }
