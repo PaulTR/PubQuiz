@@ -219,14 +219,14 @@ public class QuizQuestionFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<BeerResult> call, Throwable t) {
-
+                        Log.e("blocks", "beer load failure");
                     }
                 });
             }
 
             @Override
             public void onFailure(Call<BeerList> call, Throwable t) {
-
+                Log.e("blocks", "error loading beer list");
             }
         });
     }
@@ -467,6 +467,7 @@ public class QuizQuestionFragment extends Fragment {
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
+            Log.e("blocks", "image blocks is empty : " + imageBlocks.isEmpty());
             if( imageBlocks.isEmpty() ) {
                 return;
             }
@@ -475,6 +476,7 @@ public class QuizQuestionFragment extends Fragment {
             int item = random.nextInt(imageBlocks.size());
             int block = imageBlocks.get(item);
             imageBlocks.remove(item);
+            Log.e("blocks", "onProgressUpdate : Item : " + item);
             switch( block ) {
                 case 1: {
                     mImageBlocker1.setVisibility(View.INVISIBLE);
@@ -518,13 +520,14 @@ public class QuizQuestionFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
+            Log.e("blocks", "block size : " + imageBlocks.size());
             while( imageBlocks.size() > 0 && mCorrectTeams.isEmpty() ) {
                 try {
                     Thread.sleep(3000);
                 } catch(InterruptedException e) {
 
                 }
-
+                Log.e("blocks", "publish progress");
                 publishProgress();
             }
             return null;
