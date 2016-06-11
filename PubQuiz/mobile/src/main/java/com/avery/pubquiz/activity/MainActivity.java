@@ -22,7 +22,8 @@ import com.avery.pubquiz.fragment.LoadingFragment;
 import com.avery.pubquiz.fragment.SelectAnswer;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback,
-        LoadingFragment.LoadingFragmentActions {
+        LoadingFragment.LoadingFragmentActions,
+        SelectAnswer.SelectAnswerActions {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
     private void showQuestionFragment(QuestionMessage message) {
         SelectAnswer selectAnswerFragment = SelectAnswer.getInstance(message);
+        selectAnswerFragment.setSelectAnswerActions(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, selectAnswerFragment).commit();
     }
 
@@ -129,5 +131,12 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     public void onSetTeamName(String teamName) {
         mClient.setName(teamName);
         mManager.connectToHost(mHost, mClient);
+    }
+
+    @Override
+    public void onAnswerSelected(String answer) {
+        AnswerMessage message = new AnswerMessage();
+        message.answer = answer;
+        mManager.sendAnswer(mHost, message);
     }
 }
