@@ -13,10 +13,15 @@ public class MainActivity extends AppCompatActivity implements NearbyHostCallbac
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private NearbyManager mManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mManager = NearbyManager.getInstance();
+        mManager.initialize(this);
 
     }
         /*
@@ -28,10 +33,7 @@ public class MainActivity extends AppCompatActivity implements NearbyHostCallbac
     @Override
     protected void onStart() {
         super.onStart();
-
-        NearbyManager manager = NearbyManager.getInstance();
-        manager.initialize(this);
-        manager.startDiscovery(30, new NearbyDiscoveryCallback() {
+        mManager.startDiscovery(30, new NearbyDiscoveryCallback() {
             @Override
             public void onDiscoveringSuccess() {
                 Log.e(TAG, "onDiscoverying success");
@@ -53,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements NearbyHostCallbac
             }
         });
 
-        /*manager.startAdvertising("averytv", new NearbyHostCallback() {
+        Log.e(TAG, "hello");
+
+        /*mManager.startAdvertising("averytv", new NearbyHostCallback() {
             @Override
             public void onAdvertisingSuccess() {
                 Log.e(TAG, "onadvertising success");
