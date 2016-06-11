@@ -9,6 +9,7 @@ import android.util.Log;
 import com.avery.networking.R;
 import com.avery.networking.deserialize.BaseMessageDeserializer;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.google.android.gms.common.ConnectionResult;
@@ -290,10 +291,21 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
 
     public void sendTeamRegisteredResponse(Client client, RegisterResponseMessage message) {
-        Nearby.Connections.sendReliableMessage( mApiClient, client.getClientId(), serializeMessage(message));
+        Log.e("Nearby", "client id: " + client.getClientId() + " endpoint id: " + client.getEndpointId() + " client name: " + client.getName());
+
+        List<String> remoteClientEndPoints = new ArrayList<>();
+        remoteClientEndPoints.add(client.getEndpointId());
+        Nearby.Connections.sendReliableMessage(mApiClient, remoteClientEndPoints, serializeMessage(message));
+        //Nearby.Connections.sendReliableMessage( mApiClient, client.getEndpointId(), serializeMessage(message));
     }
 
-
+    public void sendQuestion(List<Client> clients, QuestionMessage message ) {
+        List<String> clientIds = new ArrayList<>();
+        for( Client client : clients ) {
+            clientIds.add(client.getEndpointId());
+        }
+        Nearby.Connections.sendReliableMessage(mApiClient, clientIds, serializeMessage(message));
+    }
 
     private void sendMessage( String message, Client client ) {
         /*if( mIsHost ) {
