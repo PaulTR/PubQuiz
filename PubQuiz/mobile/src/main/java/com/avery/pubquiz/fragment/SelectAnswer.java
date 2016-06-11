@@ -73,12 +73,15 @@ public class SelectAnswer extends Fragment implements View.OnClickListener {
         mAnswerText3 = (TextView) view.findViewById(R.id.answer_text_3);
         mAnswerText4 = (TextView) view.findViewById(R.id.answer_text_4);
 
+        mAnswerText1.setText(message.A);
+        mAnswerText2.setText(message.B);
+        mAnswerText3.setText(message.C);
+        mAnswerText4.setText(message.D);
+
         mAnswerButton1 = (Button) view.findViewById(R.id.answer_button_1);
         mAnswerButton2 = (Button) view.findViewById(R.id.answer_button_2);
         mAnswerButton3 = (Button) view.findViewById(R.id.answer_button_3);
         mAnswerButton4 = (Button) view.findViewById(R.id.answer_button_4);
-
-
 
         mAnswerButton1.setOnClickListener(this);
         mAnswerButton2.setOnClickListener(this);

@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     private void showQuestionFragment(QuestionMessage message) {
         SelectAnswer selectAnswerFragment = SelectAnswer.getInstance(message);
         selectAnswerFragment.setSelectAnswerActions(this);
-        
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, selectAnswerFragment);
         transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
