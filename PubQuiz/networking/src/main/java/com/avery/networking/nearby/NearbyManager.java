@@ -255,7 +255,7 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
 
     public void connectToHost(Host host, Client client) {
-
+        Log.e(TAG, "connect to host!");
         Gson gson = new Gson();
         RegisterMessage message = new RegisterMessage();
         message.teamName = client.getName();

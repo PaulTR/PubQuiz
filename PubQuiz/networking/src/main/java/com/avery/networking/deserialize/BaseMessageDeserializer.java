@@ -26,9 +26,12 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
         Log.e(TAG, "TYPE : " + messageType);
         BaseMessage message = null;
         if(messageType == "register") {
-            message = context.deserialize(json, RegisterMessage.class);
+            RegisterMessage registerMessage = new RegisterMessage();
+            registerMessage.teamName = json.getAsJsonObject().get("teamName").getAsString();
+            message = registerMessage;
         }else {
-            message = context.deserialize(json, BaseMessage.class);
+            message = new BaseMessage();
+            message.messageType = messageType;
         }
 
         return message;
