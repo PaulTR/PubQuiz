@@ -1,4 +1,4 @@
-package com.avery.pubquiz;
+package com.avery.pubquiz.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +17,7 @@ import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
+import com.avery.pubquiz.R;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback {
 

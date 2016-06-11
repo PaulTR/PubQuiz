@@ -4,7 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#e31b23"
-    tools:context="com.avery.pubquiz.MainActivity">
+    tools:context="com.avery.pubquiz.activity.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
 
     <TextView
         android:id="@+id/question_text"
@@ -13,6 +18,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_below="@+id/content_frame"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:fontFamily="serif"
         android:text="Hello world"
