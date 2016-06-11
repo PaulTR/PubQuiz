@@ -29,7 +29,7 @@ import java.util.Random;
 public class QuizQuestionFragment extends Fragment {
 
     private int mCurrentQuestionNumber = 0;
-    private int mMaxNumberOfQuestions = 10;
+    private int mMaxNumberOfQuestions = 1;
     private int mTimePerQuestion = 15;
     private int mCurrentTime;
 
