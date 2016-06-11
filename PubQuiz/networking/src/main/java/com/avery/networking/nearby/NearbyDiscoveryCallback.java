@@ -1,5 +1,7 @@
 package com.avery.networking.nearby;
 
+import com.avery.networking.nearby.messages.BaseMessage;
+
 /**
  * Created by mark on 6/10/16.
  */
@@ -12,4 +14,5 @@ public interface NearbyDiscoveryCallback {
     void onEndpointLost(String endpointId);
     void onEndpointFound(Host host, Client client);
     void onConnectionResponse();
+    void handleMessage(String endpointId, BaseMessage message);
 }

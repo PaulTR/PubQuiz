@@ -203,7 +203,14 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onMessageReceived(String endpointId, byte[] payload, boolean isReliable) {
-        String data = Arrays.toString(payload);
+        BaseMessage message = getBaseMessage(new String(payload));
+        if( mIsHost ) {
+            mNearbyHostCallback.handleMessage(endpointId, message);
+        } else {
+            mNearbyDiscoveryCallback.handleMessage(endpointId, message);
+        }
+
+
     }
 
     @Override
@@ -256,12 +263,10 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void connectToHost(Host host, Client client) {
         Log.e(TAG, "connect to host!");
-        Gson gson = new Gson();
         RegisterMessage message = new RegisterMessage();
         message.teamName = client.getName();
-        String payloadString = gson.toJson(message);
 
-        byte[] payload = payloadString.getBytes();
+        byte[] payload = serializeMessage(message);
 
         Nearby.Connections.sendConnectionRequest( mApiClient, client.getClientId(), host.getEndpointId(), payload, new Connections.ConnectionResponseCallback() {
 
@@ -285,8 +290,9 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
 
     public void sendTeamRegisteredResponse(Client client, RegisterResponseMessage message) {
-
+        Nearby.Connections.sendReliableMessage( mApiClient, client.getClientId(), serializeMessage(message));
     }
+
 
 
     private void sendMessage( String message, Client client ) {
@@ -307,5 +313,11 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
         Gson gson = gb.create();
 
         return gson.fromJson(payload, BaseMessage.class);
+    }
+
+    public byte[] serializeMessage(BaseMessage message) {
+        Gson gson = new Gson();
+        String stringMessage = gson.toJson(message);
+        return stringMessage.getBytes();
     }
 }

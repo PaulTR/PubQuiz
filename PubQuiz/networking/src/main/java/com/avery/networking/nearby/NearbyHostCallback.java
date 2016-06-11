@@ -13,5 +13,6 @@ public interface NearbyHostCallback {
     void onAdvertisingFailed(int statusCode);
     void onConnectionAccepted(Client client, BaseMessage message);
     void onConnectionFailed(int statusCode);
+    void handleMessage(String endpointId, BaseMessage message);
 
 }

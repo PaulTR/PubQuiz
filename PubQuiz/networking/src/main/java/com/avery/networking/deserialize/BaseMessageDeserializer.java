@@ -21,11 +21,12 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
     @Override
     public BaseMessage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
+        Log.e(TAG, json.toString());
         String messageType = json.getAsJsonObject().get("messageType").getAsString();
 
         Log.e(TAG, "TYPE : " + messageType);
         BaseMessage message = null;
-        if(messageType == "register") {
+        if("register".equalsIgnoreCase(messageType)) {
             RegisterMessage registerMessage = new RegisterMessage();
             registerMessage.teamName = json.getAsJsonObject().get("teamName").getAsString();
             return registerMessage;

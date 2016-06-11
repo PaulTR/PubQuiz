@@ -9,10 +9,16 @@ import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
+import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
 
+import java.util.ArrayList;
+
 public class MainActivity extends Activity implements NearbyHostCallback {
+
+    ArrayList<String> clientNames = new ArrayList<>();
+    ArrayList<Client> mClients = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,15 @@ public class MainActivity extends Activity implements NearbyHostCallback {
         Log.e("Nearby", "onConnectionAccepted: " + message.messageType );
 
         if( message instanceof RegisterMessage ) {
-            Log.e("Nearby", ( (RegisterMessage) message ).teamName );
+            RegisterMessage registerMessage = (RegisterMessage) message;
+            if( !clientNames.contains(registerMessage.teamName) ) {
+                clientNames.add(registerMessage.teamName);
+                client.setName(registerMessage.teamName);
+                mClients.add(client);
+                NearbyManager.getInstance().sendTeamRegisteredResponse(client, new RegisterResponseMessage(true));
+            } else {
+                NearbyManager.getInstance().sendTeamRegisteredResponse(client, new RegisterResponseMessage(false));
+            }
         }
     }
 

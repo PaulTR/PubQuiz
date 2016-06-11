@@ -10,4 +10,10 @@ public class RegisterResponseMessage extends BaseMessage {
     public RegisterResponseMessage() {
         messageType = "registerResponse";
     }
+
+    public RegisterResponseMessage(boolean succesful) {
+        this();
+
+        this.isSuccessful = succesful;
+    }
 }
