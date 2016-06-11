@@ -52,6 +52,7 @@ public class SelectAnswer extends Fragment implements View.OnClickListener {
 
     private SeekBar mSeekBar;
     private TextView mSeekBarLabel;
+    private Button mSeekBarSubmitButton;
 
     private SelectAnswerActions mSelectAnswerActions;
 
@@ -129,6 +130,21 @@ public class SelectAnswer extends Fragment implements View.OnClickListener {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
 
+                }
+            });
+
+            mSeekBarSubmitButton = (Button) view.findViewById(R.id.seek_bar_submit_button);
+            mSeekBarSubmitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    float value = ((float)(mSeekBar.getProgress()) / (float)(100.0));
+                    float finalValue = value * 15.0f;
+
+                    if(mSelectAnswerActions != null) {
+                        mSelectAnswerActions.onAnswerSelected(String.valueOf(finalValue));
+                        mSeekBarSubmitButton.setEnabled(false);
+                        mSeekBar.setEnabled(false);
+                    }
                 }
             });
 
