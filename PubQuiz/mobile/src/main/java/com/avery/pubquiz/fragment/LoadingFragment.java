@@ -40,31 +40,4 @@ public class LoadingFragment extends Fragment{
     }
 
 
-
-/*
-    private void insertSectionFragment() {
-
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                android.support.v4.app.Fragment fragment = mActivity.getCurrentFragment();
-
-                if( fragment == null ) {
-                    mActivity.selectItem(0);
-                }
-                else {
-                    if( fragment instanceof StoreListFragment )
-                        mActivity.selectItem(0);
-                    else if ( fragment instanceof MapFragment )
-                        mActivity.selectItem(1);
-                    else
-                        mActivity.selectItem(0);
-                }
-
-                mActivity.getSupportActionBar().show();
-            }
-        });
-    }
-*/
-
 }

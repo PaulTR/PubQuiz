@@ -7,6 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.avery.networking.R;
+import com.avery.networking.deserialize.BaseMessageDeserializer;
+import com.avery.networking.nearby.messages.AnswerMessage;
+import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
+import com.avery.networking.nearby.messages.RegisterMessage;
+import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -15,6 +21,8 @@ import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AppIdentifier;
 import com.google.android.gms.nearby.connection.AppMetadata;
 import com.google.android.gms.nearby.connection.Connections;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,13 +76,44 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
         mContext = context.getApplicationContext();
 
         mApiClient = new GoogleApiClient.Builder(context)
-                .addApi(Nearby.CONNECTIONS_API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
+                .addApi(Nearby.CONNECTIONS_API)
                 .build();
 
         mServiceId = context.getString(R.string.service_id);
+        connect();
     }
+
+
+    public void connect() {
+        mApiClient.connect();
+    }
+
+
+    public void disconnect() {
+        if( mApiClient != null && mApiClient.isConnected() ) {
+            if(mIsHost) {
+                Nearby.Connections.stopAdvertising(mApiClient);
+            }
+            mApiClient.disconnect();
+        }
+    }
+
+
+    public void setNearbyClientCallback(NearbyClientCallback nearbyClientCallback) {
+        mNearbyClientCallback = nearbyClientCallback;
+    }
+
+    public void setNearbyHostCallback(NearbyHostCallback nearbyHostCallback) {
+        mNearbyHostCallback = nearbyHostCallback;
+        mIsHost = true;
+    }
+
+    public void setNearbyDiscoveryCallback(NearbyDiscoveryCallback nearbyDiscoveryCallback) {
+        mNearbyDiscoveryCallback = nearbyDiscoveryCallback;
+    }
+
 
     private boolean isConnectedToNetwork() {
         ConnectivityManager connManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -89,71 +128,76 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.e(TAG, "onConnected");
         if (mNearbyHostCallback != null) {
-            startAdvertisingAfterConnectionEstablished();
+            mNearbyHostCallback.onConnectedSuccess();
         } else if (mNearbyDiscoveryCallback != null) {
-            startDiscoveryAfterConnectionEstablished();
+            mNearbyDiscoveryCallback.onConnectedSuccess();
         } else if (mNearbyClientCallback != null) {
-            connectToAfterEstablished();
+            mNearbyClientCallback.onConnectedSuccess();
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
         Log.d(TAG, "onConnectionSuspended() called with: " + "i = [" + i + "]");
+        if (mNearbyHostCallback != null) {
+            mNearbyHostCallback.onConnectedFailed();
+        } else if (mNearbyDiscoveryCallback != null) {
+            mNearbyDiscoveryCallback.onConnectedFailed();
+        } else if (mNearbyClientCallback != null) {
+            mNearbyClientCallback.onConnectedFailed();
+        }
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed() called with: " + "connectionResult = [" + connectionResult + "]");
-    }
-
-
-    public void disconnect() {
-        if (mIsHost) {
-            Nearby.Connections.stopAdvertising(mApiClient);
-        }
-
-        if (mApiClient != null && mApiClient.isConnected()) {
-            mApiClient.disconnect();
+        if (mNearbyHostCallback != null) {
+            mNearbyHostCallback.onConnectedFailed();
+        } else if (mNearbyDiscoveryCallback != null) {
+            mNearbyDiscoveryCallback.onConnectedFailed();
+        } else if (mNearbyClientCallback != null) {
+            mNearbyClientCallback.onConnectedFailed();
         }
     }
 
 
     @Override
-    public void onConnectionRequest(final String remoteEndpointId, final String cliendId, final String clientName, final byte[] payload) {
-        if (mIsHost) {
-            Nearby.Connections
-                    .acceptConnectionRequest(mApiClient, remoteEndpointId, payload, this)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            if (mNearbyHostCallback == null) {
-                                return;
-                            }
+    public void onConnectionRequest(final String remoteEndpointId, final String remtoeClientId, final String remoteEndpointName, final byte[] payload) {
+        if( mIsHost ) {
+            Nearby.Connections.acceptConnectionRequest( mApiClient, remoteEndpointId, payload, this ).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if( status.isSuccess() ) {
 
-                            if (status.isSuccess()) {
-                                mNearbyHostCallback.onConnectionAccepted(new Client(cliendId, clientName));
-                            } else {
-                                int statusCode = status.getStatusCode();
-                                mNearbyHostCallback.onConnectionFailed(statusCode);
-                            }
+                        if(mNearbyHostCallback != null) {
+                            String payloadStr = new String(payload);
+                            BaseMessage message = getBaseMessage(payloadStr);
+
+                            mNearbyHostCallback.onConnectionAccepted(new Client(remoteEndpointId, remtoeClientId), message);
                         }
-                    });
+                    }
+                }
+            });
         } else {
-            Nearby.Connections.rejectConnectionRequest(mApiClient, remoteEndpointId);
+            Nearby.Connections.rejectConnectionRequest(mApiClient, remoteEndpointId );
         }
     }
 
     @Override
     public void onEndpointFound(final String endpointId, String deviceId, String serviceId, final String endpointName) {
+        Log.e(TAG, "onEndPointFound : " + endpointId + " : deviceId : " + deviceId + " : serviceId : " + serviceId + " : endpointName : " + endpointName);
         if (mNearbyDiscoveryCallback != null) {
-            mNearbyDiscoveryCallback.onEndpointFound(endpointId, endpointName);
+            Host host = new Host(endpointId, endpointName);
+            Client client = new Client(endpointId, deviceId);
+            mNearbyDiscoveryCallback.onEndpointFound(host, client);
         }
     }
 
     @Override
     public void onEndpointLost(final String endpointId) {
+        Log.e(TAG, "onEndpointLost : " + endpointId);
         if (mNearbyDiscoveryCallback != null) {
             mNearbyDiscoveryCallback.onEndpointLost(endpointId);
         }
@@ -161,7 +205,16 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onMessageReceived(String endpointId, byte[] payload, boolean isReliable) {
-        String data = Arrays.toString(payload);
+        BaseMessage message = getBaseMessage(new String(payload));
+        Log.e(TAG, "onMessagereceived : " + message);
+        if( mIsHost ) {
+            mNearbyHostCallback.handleMessage(endpointId, message);
+        } else {
+            Log.e(TAG, "handle message!");
+            mNearbyDiscoveryCallback.handleMessage(endpointId, message);
+        }
+
+
     }
 
     @Override
@@ -171,107 +224,121 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
         mNearbyClientCallback = null;
     }
 
-
-    private void stopAdvertising() {
-        Nearby.Connections.stopAdvertising(mApiClient);
-    }
-
-    public void startAdvertising(final String hostName, final NearbyHostCallback callback) {
-        if (!isConnectedToNetwork()) {
+    public void advertise() {
+        if( !isConnectedToNetwork() )
             return;
-        }
 
-        mIsHost = true;
-        mNearbyHostCallback = callback;
-        mHostName = hostName;
-        mApiClient.connect();
-    }
-
-
-    public void startAdvertisingAfterConnectionEstablished() {
-        List<AppIdentifier> appIdentifierList = new ArrayList<>();
-        appIdentifierList.add(new AppIdentifier(mServiceId));
-        AppMetadata appMetadata = new AppMetadata(appIdentifierList);
-
-        Nearby.Connections
-                .startAdvertising(mApiClient, mHostName, appMetadata, NO_TIMEOUT, this)
-                .setResultCallback(new ResultCallback<Connections.StartAdvertisingResult>() {
-                    @Override
-                    public void onResult(Connections.StartAdvertisingResult result) {
-                        if (mNearbyHostCallback == null) {
-                            return;
-                        }
-
-                        if (result.getStatus().isSuccess()) {
-                            mNearbyHostCallback.onAdvertisingSuccess();
-                        } else {
-                            int statusCode = result.getStatus().getStatusCode();
-                            mNearbyHostCallback.onAdvertisingFailed(statusCode);
-                        }
+        Nearby.Connections.startAdvertising( mApiClient, mServiceId, null, NO_TIMEOUT, this ).setResultCallback(new ResultCallback<Connections.StartAdvertisingResult>() {
+            @Override
+            public void onResult(Connections.StartAdvertisingResult result) {
+                if (result.getStatus().isSuccess()) {
+                    if(mNearbyHostCallback != null) {
+                        mNearbyHostCallback.onAdvertisingSuccess();
                     }
-                });
+                }else {
+                    if(mNearbyHostCallback != null) {
+                        mNearbyHostCallback.onAdvertisingFailed(result.getStatus().getStatusCode());
+                    }
+                }
+            }
+        });
     }
 
-
-    public void startDiscovery(final NearbyDiscoveryCallback clientCallback) {
-        startDiscovery(NO_TIMEOUT, clientCallback);
-    }
-
-    public void startDiscovery(final long timeout, final NearbyDiscoveryCallback clientCallback) {
-        if (!isConnectedToNetwork()) {
+    public void discover() {
+        if( !isConnectedToNetwork() )
             return;
-        }
 
-        mTimeout = timeout;
-        mNearbyDiscoveryCallback = clientCallback;
-        mApiClient.connect();
-    }
-
-    private void startDiscoveryAfterConnectionEstablished() {
-        mIsHost = false;
-
-        Nearby.Connections
-                .startDiscovery(mApiClient, mServiceId, mTimeout, this)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (mNearbyDiscoveryCallback == null) {
-                            return;
-                        }
-
-                        if (status.isSuccess()) {
-                            mNearbyDiscoveryCallback.onDiscoveringSuccess();
-                        } else {
-                            int statusCode = status.getStatus().getStatusCode();
-                            mNearbyDiscoveryCallback.onDiscoveringFailed(statusCode);
-                        }
+        Nearby.Connections.startDiscovery(mApiClient, mServiceId, 30000L, this).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(Status status) {
+                if (status.isSuccess()) {
+                    if(mNearbyDiscoveryCallback != null) {
+                        mNearbyDiscoveryCallback.onDiscoveringSuccess();
                     }
-                });
-    }
-
-    public void connectTo(final Host host, final String clientName, final NearbyClientCallback clientCallback) {
-        if (!isConnectedToNetwork()) {
-            return;
-        }
-
-        mHost = host;
-        mClientName = clientName;
-        mNearbyClientCallback = clientCallback;
-        mApiClient.connect();
-    }
-
-    private void connectToAfterEstablished() {
-        Nearby.Connections.sendConnectionRequest(mApiClient, mClientName, mHost.getEndpointId(), null,
-                new Connections.ConnectionResponseCallback() {
-                    @Override
-                    public void onConnectionResponse(String remoteEndpointId, Status status,
-                                                     byte[] bytes) {
-                        if (status.isSuccess()) {
-                            // Successful connection
-                        } else {
-                            // Failed connection
-                        }
+                }else {
+                    if(mNearbyDiscoveryCallback != null) {
+                        mNearbyDiscoveryCallback.onDiscoveringFailed(status.getStatusCode());
                     }
-                }, this);
+                }
+            }
+        });
+    }
+
+
+    public void connectToHost(Host host, Client client) {
+        Log.e(TAG, "connect to host!");
+        RegisterMessage message = new RegisterMessage();
+        message.teamName = client.getName();
+
+        byte[] payload = serializeMessage(message);
+
+        Nearby.Connections.sendConnectionRequest( mApiClient, client.getClientId(), host.getEndpointId(), payload, new Connections.ConnectionResponseCallback() {
+
+            @Override
+            public void onConnectionResponse(String s, Status status, byte[] bytes) {
+                if( status.isSuccess() ) {
+                    Log.e(TAG, "onConnectionResponse");
+                    Nearby.Connections.stopDiscovery(mApiClient, mServiceId);
+
+                    if( !mIsHost ) {
+                        mIsConnected = true;
+                    }
+
+                    mNearbyDiscoveryCallback.onConnectionResponse();
+                } else {
+                    if( !mIsHost ) {
+                        mIsConnected = false;
+                    }
+                }
+            }
+        }, this );
+    }
+
+
+    public void sendTeamRegisteredResponse(Client client, RegisterResponseMessage message) {
+        Log.e("Nearby", "client id: " + client.getClientId() + " endpoint id: " + client.getEndpointId() + " client name: " + client.getName());
+
+        List<String> remoteClientEndPoints = new ArrayList<>();
+        remoteClientEndPoints.add(client.getEndpointId());
+        Nearby.Connections.sendReliableMessage(mApiClient, remoteClientEndPoints, serializeMessage(message));
+        //Nearby.Connections.sendReliableMessage( mApiClient, client.getEndpointId(), serializeMessage(message));
+    }
+
+    public void sendAnswer(Host host, AnswerMessage message) {
+        Nearby.Connections.sendReliableMessage(mApiClient, host.getEndpointId(), serializeMessage(message));
+    }
+
+    public void sendQuestion(List<Client> clients, QuestionMessage message ) {
+        List<String> clientIds = new ArrayList<>();
+        for( Client client : clients ) {
+            clientIds.add(client.getEndpointId());
+        }
+        Nearby.Connections.sendReliableMessage(mApiClient, clientIds, serializeMessage(message));
+    }
+
+    private void sendMessage( String message, Client client ) {
+        /*if( mIsHost ) {
+            Nearby.Connections.sendReliableMessage(mApiClient, mRemotePeerEndpoints, message.getBytes());
+            mMessageAdapter.add(message);
+            mMessageAdapter.notifyDataSetChanged();
+        } else {
+            Nearby.Connections.sendReliableMessage( mGoogleApiClient, mRemoteHostEndpoint, ( Nearby.Connections.getLocalDeviceId( mGoogleApiClient ) + " says: " + message ).getBytes() );
+        }*/
+    }
+
+
+    public BaseMessage getBaseMessage(String payload) {
+        GsonBuilder gb = new GsonBuilder();
+        gb.registerTypeAdapter(BaseMessage.class, new BaseMessageDeserializer());
+
+        Gson gson = gb.create();
+
+        return gson.fromJson(payload, BaseMessage.class);
+    }
+
+    public byte[] serializeMessage(BaseMessage message) {
+        Gson gson = new Gson();
+        String stringMessage = gson.toJson(message);
+        return stringMessage.getBytes();
     }
 }
