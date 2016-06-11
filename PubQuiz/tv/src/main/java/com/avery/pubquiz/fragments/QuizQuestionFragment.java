@@ -8,16 +8,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.avery.networking.model.Question;
+import com.avery.networking.model.beer.Beer;
+import com.avery.networking.model.beer.BeerList;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.messages.AnswerMessage;
+import com.avery.networking.services.AveryNetworkAdapter;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.Utils;
 import com.avery.pubquiz.activities.MainActivity;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,6 +30,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class QuizQuestionFragment extends Fragment {
 
@@ -34,6 +43,7 @@ public class QuizQuestionFragment extends Fragment {
     private int mCurrentTime;
 
 
+    private RelativeLayout mMultipleChoiceContainer;
     private LinearLayout mQuestionContainer;
     private TextView mQuestionTextView;
     private TextView mTimerTextView;
@@ -41,6 +51,19 @@ public class QuizQuestionFragment extends Fragment {
     private TextView mAnswerTextViewB;
     private TextView mAnswerTextViewC;
     private TextView mAnswerTextViewD;
+
+    private ImageView mBeerImage;
+    private View mImageBlocker1;
+    private View mImageBlocker2;
+    private View mImageBlocker3;
+    private View mImageBlocker4;
+    private View mImageBlocker5;
+    private View mImageBlocker6;
+    private View mImageBlocker7;
+    private View mImageBlocker8;
+    private View mImageBlocker9;
+
+    private RelativeLayout mImageQuestionContainer;
 
     private RelativeLayout mCorrectTeamsContainer;
     private TextView mTeam1;
@@ -53,6 +76,8 @@ public class QuizQuestionFragment extends Fragment {
     private List<Client> mInCorrectTeams = new ArrayList<>();
 
     private Question mCurrentQuestion;
+
+    private List<Integer> imageBlocks = new ArrayList<>();
 
     public static QuizQuestionFragment getInstance() {
         QuizQuestionFragment fragment = new QuizQuestionFragment();
@@ -82,11 +107,10 @@ public class QuizQuestionFragment extends Fragment {
 
     }
 
-    private void showTieBreaker() {
-
-    }
-
     private void initViews(View view) {
+        mMultipleChoiceContainer = (RelativeLayout) view.findViewById(R.id.multiple_choice_container);
+        mImageQuestionContainer = (RelativeLayout) view.findViewById(R.id.image_question_container);
+
         mQuestionContainer = (LinearLayout) view.findViewById(R.id.container_question);
         mQuestionTextView = (TextView) view.findViewById(R.id.tv_question);
         mTimerTextView = (TextView) view.findViewById(R.id.tv_time);
@@ -103,29 +127,76 @@ public class QuizQuestionFragment extends Fragment {
         mEveryonesWrongContainer = (RelativeLayout) view.findViewById(R.id.tv_everyone_wrong);
         mEveryonesWrongContainer.setVisibility(View.GONE);
 
+        mImageBlocker1 = view.findViewById(R.id.image_blocker_1);
+        mImageBlocker2 = view.findViewById(R.id.image_blocker_2);
+        mImageBlocker3 = view.findViewById(R.id.image_blocker_3);
+        mImageBlocker4 = view.findViewById(R.id.image_blocker_4);
+        mImageBlocker5 = view.findViewById(R.id.image_blocker_5);
+        mImageBlocker6 = view.findViewById(R.id.image_blocker_6);
+        mImageBlocker7 = view.findViewById(R.id.image_blocker_7);
+        mImageBlocker8 = view.findViewById(R.id.image_blocker_8);
+        mImageBlocker9 = view.findViewById(R.id.image_blocker_9);
+        mBeerImage = (ImageView) view.findViewById(R.id.beer_image);
+
     }
 
-    private void loadQuestion() {
-        mCurrentQuestionNumber++;
-        mCurrentTime = mTimePerQuestion;
-        mCorrectTeams.clear();
-        mInCorrectTeams.clear();
-        mQuestionContainer.setVisibility(View.VISIBLE);
-        mCorrectTeamsContainer.setVisibility(View.GONE);
-        mEveryonesWrongContainer.setVisibility(View.GONE);
-        mCurrentQuestion = mQuestions.get( ((new Random()).nextInt(10)) );
-
+    private void loadMultipleChoiceQuestion() {
+        mCurrentQuestion = mQuestions.get(((new Random()).nextInt(10)));
         mCurrentQuestion.setQuestionType("multiple-choice");
         mQuestionTextView.setText(mCurrentQuestion.getQuestion());
         mAnswerTextViewA.setText(mCurrentQuestion.getA());
         mAnswerTextViewB.setText(mCurrentQuestion.getB());
         mAnswerTextViewC.setText(mCurrentQuestion.getC());
         mAnswerTextViewD.setText(mCurrentQuestion.getD());
+        mCurrentTime = mTimePerQuestion;
+
+        mMultipleChoiceContainer.setVisibility(View.VISIBLE);
+        mImageQuestionContainer.setVisibility(View.GONE);
 
         mTimerTextView.setText(String.valueOf(mCurrentTime));
-        ((MainActivity) getActivity()).sendQuestion( mCurrentQuestion );
+
+        ((MainActivity) getActivity()).sendQuestion(mCurrentQuestion);
 
         new QuestionTimerTask().execute();
+    }
+
+    private void loadQuestion() {
+        mCurrentQuestionNumber++;
+        mCorrectTeams.clear();
+        mInCorrectTeams.clear();
+        mQuestionContainer.setVisibility(View.VISIBLE);
+        mCorrectTeamsContainer.setVisibility(View.GONE);
+        mEveryonesWrongContainer.setVisibility(View.GONE);
+
+        //loadMultipleChoiceQuestion;
+
+        //Image question
+        imageBlocks.add(1);
+        imageBlocks.add(2);
+        imageBlocks.add(3);
+        imageBlocks.add(4);
+        imageBlocks.add(5);
+        imageBlocks.add(6);
+        imageBlocks.add(7);
+        imageBlocks.add(8);
+        imageBlocks.add(9);
+        mMultipleChoiceContainer.setVisibility(View.GONE);
+        AveryNetworkAdapter.getInstance().getService().getBeers().enqueue(new Callback<BeerList>() {
+            @Override
+            public void onResponse(Call<BeerList> call, Response<BeerList> response) {
+                BeerList list = response.body();
+                Random random = new Random();
+                int randomInt = random.nextInt(list.beers.size());
+                Beer beer = list.beers.get(random.nextInt(randomInt));
+                Glide.with(getActivity()).load(beer.getLabelImage().getDesktop2x()).into(mBeerImage);
+                new removeBeerBlockTask().execute();
+            }
+
+            @Override
+            public void onFailure(Call<BeerList> call, Throwable t) {
+
+            }
+        });
     }
 
     private void loadJsonQuestions() {
@@ -208,6 +279,74 @@ public class QuizQuestionFragment extends Fragment {
         }
     }
 
+    public class removeBeerBlockTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if( imageBlocks.isEmpty() ) {
+                return;
+            }
+
+            Random random = new Random();
+            int item = random.nextInt(imageBlocks.size());
+            int block = imageBlocks.get(item);
+            imageBlocks.remove(item);
+            switch( block ) {
+                case 1: {
+                    mImageBlocker1.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 2: {
+                    mImageBlocker2.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 3: {
+                    mImageBlocker3.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 4: {
+                    mImageBlocker4.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 5: {
+                    mImageBlocker5.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 6: {
+                    mImageBlocker6.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 7: {
+                    mImageBlocker7.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 8: {
+                    mImageBlocker8.setVisibility(View.INVISIBLE);
+                    break;
+                }
+                case 9: {
+                    mImageBlocker9.setVisibility(View.INVISIBLE);
+                    break;
+                }
+
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            while( imageBlocks.size() > 0 && mCorrectTeams.isEmpty() ) {
+                try {
+                    Thread.sleep(3000);
+                } catch(InterruptedException e) {
+
+                }
+
+                publishProgress();
+            }
+            return null;
+        }
+    }
 
     public class showQuestionResultTask extends AsyncTask<Void, Void, Void> {
 
@@ -232,7 +371,5 @@ public class QuizQuestionFragment extends Fragment {
             }
         }
     }
-
-
 
 }
