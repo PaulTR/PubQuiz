@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.avery.networking.R;
 import com.avery.networking.deserialize.BaseMessageDeserializer;
+import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
@@ -295,6 +296,11 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
     public void sendTeamRegisteredResponse(Client client, RegisterResponseMessage message) {
         Nearby.Connections.sendReliableMessage( mApiClient, client.getClientId(), serializeMessage(message));
+    }
+
+
+    public void sendAnswer(Host host, AnswerMessage message) {
+        Nearby.Connections.sendReliableMessage(mApiClient, host.getEndpointId(), serializeMessage(message));
     }
 
 

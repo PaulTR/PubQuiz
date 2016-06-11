@@ -6,4 +6,26 @@
     android:background="#e31b23"
     tools:context="com.avery.pubquiz.MainActivity">
 
+    <TextView
+        android:id="@+id/question_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:fontFamily="serif"
+        android:text="Hello world"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/answer_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="Submit Answer"/>
+
 </RelativeLayout>

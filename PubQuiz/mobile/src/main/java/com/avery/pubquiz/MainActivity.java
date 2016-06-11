@@ -3,13 +3,17 @@ package com.avery.pubquiz;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.Host;
 import com.avery.networking.nearby.NearbyDiscoveryCallback;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
+import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 
@@ -19,11 +23,30 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
     private NearbyManager mManager;
     private Client mClient;
+    private Host mHost;
+
+    private TextView mQuestionText;
+    private Button answerButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        answerButton = (Button) findViewById(R.id.answer_button);
+        answerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnswerMessage message = new AnswerMessage();
+                message.answer = "A";
+                mManager.sendAnswer(mHost, message);
+            }
+        });
+        answerButton.setVisibility(View.GONE);
+
+        mQuestionText = (TextView) findViewById(R.id.question_text);
+        mQuestionText.setVisibility(View.GONE);
 
         mManager = NearbyManager.getInstance();
         mManager.setNearbyDiscoveryCallback(this);
@@ -65,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     public void onEndpointFound(Host host, Client client) {
         Log.e(TAG, "onEndpoint Found");
         if(host != null) {
+            mHost = host;
             Log.e(TAG, "host : " + host.getEndpointId() + " : " + host.getEndpointName());
             if(client != null) {
                 mClient = client;
@@ -86,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         if(message != null) {
             if(message instanceof RegisterResponseMessage) {
                 Log.e(TAG, "Register response is successful: " + ((RegisterResponseMessage) message).isSuccessful );
+            }else if(message instanceof QuestionMessage) {
+                answerButton.setVisibility(View.VISIBLE);
+                mQuestionText.setVisibility(View.VISIBLE);
+                mQuestionText.setText(((QuestionMessage) message).getQuestion());
             }
         }
     }
