@@ -58,6 +58,12 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mManager.disconnect();
+    }
+
+    @Override
     public void onConnectedSuccess() {
         Log.e(TAG, "onConnected Success");
         mManager.discover();
