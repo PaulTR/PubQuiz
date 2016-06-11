@@ -18,8 +18,10 @@ import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
+import com.avery.pubquiz.fragment.LoadingFragment;
 
-public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback {
+public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback,
+        LoadingFragment.LoadingFragmentActions {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -27,8 +29,8 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     private Client mClient;
     private Host mHost;
 
-    private TextView mQuestionText;
-    private Button answerButton;
+
+    private LoadingFragment mLoadingFragment;
 
 
     @Override
@@ -36,28 +38,18 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        answerButton = (Button) findViewById(R.id.answer_button);
-        answerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AnswerMessage message = new AnswerMessage();
-                message.answer = "A";
-                mManager.sendAnswer(mHost, message);
-            }
-        });
-        answerButton.setVisibility(View.GONE);
-
-        mQuestionText = (TextView) findViewById(R.id.question_text);
-        mQuestionText.setVisibility(View.GONE);
-
         mManager = NearbyManager.getInstance();
         mManager.setNearbyDiscoveryCallback(this);
+
+        mLoadingFragment = new LoadingFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mLoadingFragment).commitAllowingStateLoss();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mManager.initialize(this);
+        //mManager.initialize(this);
     }
 
     @Override
@@ -94,8 +86,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
             Log.e(TAG, "host : " + host.getEndpointId() + " : " + host.getEndpointName());
             if(client != null) {
                 mClient = client;
-                client.setName("my stupid name");
-                mManager.connectToHost(host, client);
+                mLoadingFragment.setConnected();
             }
         }
     }
@@ -111,12 +102,19 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         Log.e(TAG, "handle message!");
         if(message != null) {
             if(message instanceof RegisterResponseMessage) {
-                Log.e(TAG, "Register response is successful: " + ((RegisterResponseMessage) message).isSuccessful );
+                boolean successful = ((RegisterResponseMessage) message).isSuccessful;
+                if(successful) {
+                    //show waiting for questions screen
+                }
             }else if(message instanceof QuestionMessage) {
-                answerButton.setVisibility(View.VISIBLE);
-                mQuestionText.setVisibility(View.VISIBLE);
-                mQuestionText.setText(((QuestionMessage) message).question);
+                //show question screen
             }
         }
+    }
+
+    @Override
+    public void onSetTeamName(String teamName) {
+        mClient.setName(teamName);
+        mManager.connectToHost(mHost, mClient);
     }
 }
