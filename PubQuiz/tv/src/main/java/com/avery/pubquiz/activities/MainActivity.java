@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.avery.networking.model.Question;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
+import com.avery.pubquiz.fragments.QuizQuestionFragment;
 
 import java.util.ArrayList;
 
@@ -26,13 +29,16 @@ public class MainActivity extends Activity implements NearbyHostCallback {
         setContentView(R.layout.activity_main);
 
         initFragment();
+    }
 
+    public void startAdvertising() {
         NearbyManager manager = NearbyManager.getInstance();
-
         manager.setNearbyHostCallback(this);
-
         manager.initialize(this);
+    }
 
+    public void sendQuestion(Question question) {
+        NearbyManager.getInstance().sendQuestion(mClients, new QuestionMessage(question.getQuestion()));
     }
 
     private void initFragment() {
@@ -65,16 +71,27 @@ public class MainActivity extends Activity implements NearbyHostCallback {
         Log.e("Nearby", "onConnectionAccepted: " + message.messageType );
 
         if( message instanceof RegisterMessage ) {
+            Log.e("Nearby", "is register message");
             RegisterMessage registerMessage = (RegisterMessage) message;
             if( !clientNames.contains(registerMessage.teamName) ) {
+                Log.e("Nearby", "is regsiter message: " + registerMessage.teamName );
                 clientNames.add(registerMessage.teamName);
                 client.setName(registerMessage.teamName);
                 mClients.add(client);
                 NearbyManager.getInstance().sendTeamRegisteredResponse(client, new RegisterResponseMessage(true));
+
+                if( clientNames.size() >= 1 ) {
+                    loadQuiz();
+                }
             } else {
+                Log.e("Nearby", "send failed");
                 NearbyManager.getInstance().sendTeamRegisteredResponse(client, new RegisterResponseMessage(false));
             }
         }
+    }
+
+    private void loadQuiz() {
+        getFragmentManager().beginTransaction().replace(R.id.container, QuizQuestionFragment.getInstance()).commit();
     }
 
     @Override

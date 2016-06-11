@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.google.gson.JsonDeserializationContext;
@@ -40,7 +41,11 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
             AnswerMessage answerMessage = new AnswerMessage();
             answerMessage.answer = json.getAsJsonObject().get("answer").getAsString();
             return answerMessage;
-        }else {
+        }else if( "question".equalsIgnoreCase(messageType) ) {
+            QuestionMessage questionMessage = new QuestionMessage();
+            questionMessage.question = json.getAsJsonObject().get("question").getAsString();
+            return questionMessage;
+        } else {
             message = new BaseMessage();
             message.messageType = messageType;
             return message;
