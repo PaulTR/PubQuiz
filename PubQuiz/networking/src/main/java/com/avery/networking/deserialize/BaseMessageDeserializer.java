@@ -7,6 +7,7 @@ import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
+import com.avery.networking.nearby.messages.WinnerMessage;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -52,6 +53,10 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
                 questionMessage.D = json.getAsJsonObject().get("D").getAsString();
             }
             return questionMessage;
+        } else if( "winner".equalsIgnoreCase(messageType) ) {
+            WinnerMessage winnerMessage = new WinnerMessage();
+            winnerMessage.winner = json.getAsJsonObject().get("winner").toString();
+            return winnerMessage;
         } else {
             message = new BaseMessage();
             message.messageType = messageType;
