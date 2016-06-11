@@ -30,6 +30,7 @@
             android:textSize="28sp"
             android:layout_above="@+id/tv_question"/>
 
+
         <RelativeLayout
             android:id="@+id/multiple_choice_container"
             android:layout_width="match_parent"
@@ -120,10 +121,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/name_beer_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name That Beer!"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:fontFamily="serif"
+                android:textStyle="bold"
+                android:textSize="28sp"/>
+
             <RelativeLayout
                 android:layout_width="320dp"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true">
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/name_beer_text"
+                android:layout_marginTop="16dp">
 
                 <ImageView
                     android:id="@+id/beer_image"
