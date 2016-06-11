@@ -1,6 +1,7 @@
 package com.avery.pubquiz.fragment;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -77,6 +78,8 @@ public class WinOrLose extends Fragment implements View.OnClickListener{
 
         if (client.getName().equalsIgnoreCase(message.getWinner())) {
             mWinLoseText.setText("Congratulations, You Win!");
+            MediaPlayer mediaPlayer = MediaPlayer.create(getContext(), R.raw.congratulations_you_won);
+            mediaPlayer.start();
         } else {
             mWinLoseText.setText("You Lose");
         }
