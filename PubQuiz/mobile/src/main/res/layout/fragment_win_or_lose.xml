@@ -28,14 +28,16 @@
         android:gravity="center_horizontal"
         android:text="Congratulations, You Win!"/>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
     <TextView
         android:id="@+id/play_again_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/win_lose_text"
-        android:layout_marginTop="40dp"
-        android:paddingTop="16dp"
+        android:paddingTop="22dp"
         android:paddingBottom="12dp"
         android:background="#221f1f"
         android:textAppearance="?android:textAppearanceLarge"
@@ -56,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="10dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:background="#221f1f"
@@ -93,5 +95,6 @@
 
     </LinearLayout>
 
+    </RelativeLayout>
 
 </RelativeLayout>
