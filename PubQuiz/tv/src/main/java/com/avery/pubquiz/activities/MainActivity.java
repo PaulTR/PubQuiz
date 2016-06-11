@@ -16,6 +16,7 @@ import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
+import com.avery.networking.nearby.messages.WinnerMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
 import com.avery.pubquiz.fragments.QuizQuestionFragment;
@@ -209,5 +210,9 @@ public class MainActivity extends Activity implements NearbyHostCallback {
 
     public int getNumberOfTeams() {
         return mClients.size();
+    }
+
+    public void sendWinner( String winnerName ) {
+        NearbyManager.getInstance().sendWinner( mClients, new WinnerMessage(winnerName) );
     }
 }

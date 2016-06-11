@@ -13,6 +13,7 @@ import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
+import com.avery.networking.nearby.messages.WinnerMessage;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -316,6 +317,15 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
             clientIds.add(client.getEndpointId());
         }
         Nearby.Connections.sendReliableMessage(mApiClient, clientIds, serializeMessage(message));
+    }
+
+    public void sendWinner( List<Client> clients, WinnerMessage winnerMessage ) {
+        List<String> clientIds = new ArrayList<>();
+        for( Client client : clients ) {
+            clientIds.add(client.getEndpointId());
+        }
+
+        Nearby.Connections.sendReliableMessage(mApiClient, clientIds, serializeMessage(winnerMessage));
     }
 
     private void sendMessage( String message, Client client ) {

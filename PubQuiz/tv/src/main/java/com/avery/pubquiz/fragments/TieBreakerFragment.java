@@ -111,7 +111,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
     }
 
     private void determineWinner() {
-        float guessDistance = 0.0f;
+        float guessDistance = 100.0f;
         Client closestGuesser = null;
 
         for (Map.Entry<Client, Float> entry : receivedAnswers.entrySet()) {
@@ -122,5 +122,6 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
         }
 
         mTieBreakerTextView.setText("Winner is " + closestGuesser.getName() + "!");
+        ((MainActivity)getActivity()).sendWinner(closestGuesser.getName());
     }
 }
