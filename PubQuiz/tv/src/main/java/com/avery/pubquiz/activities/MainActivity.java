@@ -8,6 +8,7 @@ import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
 
@@ -56,6 +57,10 @@ public class MainActivity extends Activity implements NearbyHostCallback {
     @Override
     public void onConnectionAccepted(Client client, BaseMessage message) {
         Log.e("Nearby", "onConnectionAccepted: " + message.messageType );
+
+        if( message instanceof RegisterMessage ) {
+            Log.e("Nearby", ( (RegisterMessage) message ).teamName );
+        }
     }
 
     @Override
