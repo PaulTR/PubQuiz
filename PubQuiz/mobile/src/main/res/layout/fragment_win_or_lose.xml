@@ -12,7 +12,6 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/avery_tab"/>
 
-
     <TextView
         android:id="@+id/win_lose_text"
         android:layout_width="match_parent"
@@ -28,14 +27,18 @@
         android:gravity="center_horizontal"
         android:text="Congratulations, You Win!"/>
 
+    <RelativeLayout
+        android:id="@+id/play_again_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
     <TextView
         android:id="@+id/play_again_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/win_lose_text"
-        android:layout_marginTop="40dp"
-        android:paddingTop="16dp"
+        android:paddingTop="22dp"
         android:paddingBottom="12dp"
         android:background="#221f1f"
         android:textAppearance="?android:textAppearanceLarge"
@@ -46,24 +49,18 @@
         android:textAllCaps="true"
         android:gravity="center_horizontal"
         android:text="Play again?"
-        android:visibility="visible"
-
         />
-
 
     <LinearLayout
         android:id="@+id/play_again"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="10dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:background="#221f1f"
-        android:layout_below="@+id/play_again_text"
-        android:visibility="visible">
-
-
+        android:layout_below="@+id/play_again_text">
 
             <Button
                 android:id="@+id/yes_button"
@@ -74,9 +71,9 @@
                 android:textStyle="bold"
                 android:text="Y"/>
 
-        <Space
-            android:layout_width="72dp"
-            android:layout_height="match_parent" />
+            <Space
+                android:layout_width="72dp"
+                android:layout_height="match_parent" />
 
             <Button
                 android:id="@+id/no_button"
@@ -86,12 +83,7 @@
                 android:textSize="48sp"
                 android:textStyle="bold"
                 android:text="N"/>
+        </LinearLayout>
 
-
-
-
-
-    </LinearLayout>
-
-
+    </RelativeLayout>
 </RelativeLayout>
