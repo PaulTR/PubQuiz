@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.avery.networking.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,9 +35,9 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
 
     private static NearbyManager sInstance;
 
-    public static NearbyManager getInstance(Context context) {
-        if(sInstance == null)
-            sInstance = new NearbyManager(context);
+    public static NearbyManager getInstance() {
+        if (sInstance == null)
+            sInstance = new NearbyManager();
 
         return sInstance;
     }
@@ -60,9 +59,7 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
     private long mTimeout;
 
 
-    private NearbyManager(Context context) {
-
-        mContext = context.getApplicationContext();
+    private NearbyManager() {
 
     }
 
@@ -77,19 +74,6 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
                 .build();
 
         mServiceId = context.getString(R.string.service_id);
-    }
-
-
-
-    public void onStart() {
-        mApiClient.connect();
-    }
-
-
-    public void onStop() {
-        if (mApiClient != null && mApiClient.isConnected()) {
-            mApiClient.disconnect();
-        }
     }
 
     private boolean isConnectedToNetwork() {

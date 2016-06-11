@@ -7,6 +7,10 @@ import android.util.Log;
 import com.avery.networking.model.beer.Beer;
 import com.avery.networking.model.beer.BeerList;
 import com.avery.networking.model.beer.BeerResult;
+import com.avery.networking.nearby.Client;
+import com.avery.networking.nearby.NearbyDiscoveryCallback;
+import com.avery.networking.nearby.NearbyHostCallback;
+import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.services.AveryNetworkAdapter;
 
 import retrofit2.Call;
@@ -22,46 +26,57 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Call<BeerList> call = AveryNetworkAdapter.getInstance().getService().getBeers();
-        call.enqueue(new Callback<BeerList>() {
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        NearbyManager manager = NearbyManager.getInstance();
+        manager.initialize(this);
+        manager.startDiscovery(30, new NearbyDiscoveryCallback() {
             @Override
-            public void onResponse(Call<BeerList> call, Response<BeerList> response) {
-                Log.e(TAG, "beer list returned : " + response.body().beers.size());
+            public void onDiscoveringSuccess() {
+                Log.e(TAG, "onDiscoverying success");
             }
 
             @Override
-            public void onFailure(Call<BeerList> call, Throwable t) {
-                Log.e(TAG, "error getting beer list");
-                t.printStackTrace();
+            public void onDiscoveringFailed(int statusCode) {
+                Log.e(TAG, "onDiscovering failed : " + statusCode);
+            }
+
+            @Override
+            public void onEndpointLost(String endpointId) {
+                Log.e(TAG, "onEndpointLog : " + endpointId);
+            }
+
+            @Override
+            public void onEndpointFound(String endpointId, String endpointName) {
+                Log.e(TAG, "endpointid : " + endpointId + " : " + endpointName);
             }
         });
 
-        Call<BeerList> barrelCall = AveryNetworkAdapter.getInstance().getService().getBarrelAgedBeers();
-        barrelCall.enqueue(new Callback<BeerList>() {
+        /*manager.startAdvertising("averytv", new NearbyHostCallback() {
             @Override
-            public void onResponse(Call<BeerList> call, Response<BeerList> response) {
-                Log.e(TAG, "barrel aged beer list returned : " + response.body().beers.size());
+            public void onAdvertisingSuccess() {
+                Log.e(TAG, "onadvertising success");
             }
 
             @Override
-            public void onFailure(Call<BeerList> call, Throwable t) {
-                Log.e(TAG, "error getting barrel aged beer list");
-                t.printStackTrace();
-            }
-        });
-
-        Call<BeerResult> singleBeer = AveryNetworkAdapter.getInstance().getService().getBeer("ipa");
-        singleBeer.enqueue(new Callback<BeerResult>() {
-            @Override
-            public void onResponse(Call<BeerResult> call, Response<BeerResult> response) {
-                Log.e(TAG, "beer returned : " + response.body().getBeer().getName());
+            public void onAdvertisingFailed(int statusCode) {
+                Log.e(TAG, "onadvertising failed : " + statusCode);
             }
 
             @Override
-            public void onFailure(Call<BeerResult> call, Throwable t) {
-                Log.e(TAG, "error getting single beer");
-                t.printStackTrace();
+            public void onConnectionAccepted(Client client) {
+                Log.e(TAG, "onconnectionaccpeted : " + client.getName());
             }
-        });
+
+            @Override
+            public void onConnectionFailed(int statusCode) {
+                Log.e(TAG, "on connection failed : " + statusCode);
+            }
+        });*/
     }
 }
