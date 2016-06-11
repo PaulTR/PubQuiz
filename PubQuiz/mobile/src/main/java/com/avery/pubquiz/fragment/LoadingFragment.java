@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -80,10 +82,18 @@ public class LoadingFragment extends Fragment {
     }
 
 
-    //TODO - needs an animated transition
     public void setConnected() {
-        mLoadingContainer.setVisibility(View.GONE);
+
+        final Animation fadeOut = new AnimationUtils().loadAnimation(getContext(), R.anim.abc_fade_out);
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) { mLoadingContainer.setVisibility(View.GONE); }
+        });
+        mLoadingContainer.startAnimation(fadeOut);
+
         mTeamNameContainer.setVisibility(View.VISIBLE);
+        mTeamNameContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.abc_fade_in));
     }
 
 
