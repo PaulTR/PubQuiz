@@ -34,33 +34,33 @@
         android:layout_alignParentBottom="true"
         android:visibility="gone">
 
-    <TextView
-        android:id="@+id/play_again_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="22dp"
-        android:paddingBottom="12dp"
-        android:background="#221f1f"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textSize="30sp"
-        android:fontFamily="serif"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textAllCaps="true"
-        android:gravity="center_horizontal"
-        android:text="Play again?"
-        />
+        <TextView
+            android:id="@+id/play_again_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="22dp"
+            android:paddingBottom="12dp"
+            android:background="#221f1f"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textSize="30sp"
+            android:fontFamily="serif"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:gravity="center_horizontal"
+            android:text="Play again?"
+            />
 
-    <LinearLayout
-        android:id="@+id/play_again"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="10dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="#221f1f"
-        android:layout_below="@+id/play_again_text">
+        <LinearLayout
+            android:id="@+id/play_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="#221f1f"
+            android:layout_below="@+id/play_again_text">
 
             <Button
                 android:id="@+id/yes_button"
@@ -69,7 +69,8 @@
                 android:layout_marginBottom="8dp"
                 android:textSize="48sp"
                 android:textStyle="bold"
-                android:text="Y"/>
+                android:text="Y"
+                android:background="@color/colorPrimary"/>
 
             <Space
                 android:layout_width="72dp"
@@ -82,7 +83,8 @@
                 android:layout_marginBottom="8dp"
                 android:textSize="48sp"
                 android:textStyle="bold"
-                android:text="N"/>
+                android:text="N"
+                android:background="@color/colorPrimary"/>
         </LinearLayout>
 
     </RelativeLayout>
