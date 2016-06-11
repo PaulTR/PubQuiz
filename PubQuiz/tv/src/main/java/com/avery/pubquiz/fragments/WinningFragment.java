@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.avery.pubquiz.R;
+import com.avery.pubquiz.activities.MainActivity;
 
 public class WinningFragment extends Fragment {
 
@@ -43,6 +44,7 @@ public class WinningFragment extends Fragment {
         mTeamScore = getArguments().getInt(EXTRA_TEAM_SCORE);
 
         mWinnerTextView.setText(mTeamName + " : " + mTeamScore);
+        ((MainActivity)getActivity()).sendWinner(mTeamName);
     }
 
     private void initViews(View view) {

@@ -30,6 +30,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
     private HashMap<Client, Float> receivedAnswers = new HashMap<>();
 
     private TextView mTieBreakerTextView;
+    private TextView mTieBreakerTeamsTextView;
 
     private static final String EXTRA_CLIENT_NAME_LIST = "extra_client_name_list";
     private static final String EXTRA_HIGH_SCORE = "extra_high_score";
@@ -54,6 +55,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
         super.onViewCreated(view, savedInstanceState);
 
         mTieBreakerTextView = (TextView) view.findViewById(R.id.tv_tie);
+        mTieBreakerTeamsTextView = (TextView) view.findViewById(R.id.tv_tie_teams);
 
         TapFlowManager.getInstance().setTapFlowEventListener(this);
         TapFlowManager.getInstance().connect();
@@ -80,7 +82,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
 
         StringBuilder builder = new StringBuilder();
         for( String teamName : getArguments().getStringArrayList(EXTRA_CLIENT_NAME_LIST)) {
-            builder.append(teamName).append("\n");
+            builder.append(teamName).append("\n\n");
         }
         //builder.append(getArguments().getInt(EXTRA_HIGH_SCORE));
         final String teamNames = builder.toString();
@@ -91,7 +93,10 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
                 Log.e("Beer size", "size: " + tapBeerList.size());
                 Random random = new Random();
                 int randInt = random.nextInt(tapBeerList.size());
-                mTieBreakerTextView.setText("Tied Game! Winning teams, guess how much beer is in the keg of " + tapBeerList.get(randInt).getBeerName() + "!\n" + teamNames);
+
+                mTieBreakerTextView.setText("Tied Game! Winning teams, guess how much beer is in the keg of " + tapBeerList.get(randInt).getBeerName() + "!");
+                mTieBreakerTeamsTextView.setText(teamNames);
+
                 mAmountRemaining = tapBeerList.get(randInt).getAmountRemaining();
 
                 Question question = new Question();

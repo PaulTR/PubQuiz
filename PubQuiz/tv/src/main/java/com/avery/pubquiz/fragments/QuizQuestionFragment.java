@@ -448,7 +448,7 @@ public class QuizQuestionFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            while ( !(mInCorrectTeams.size() + mCorrectTeams.size() == ((MainActivity) getActivity()).getNumberOfTeams() )
+            while ( isAdded() && !(mInCorrectTeams.size() + mCorrectTeams.size() == ((MainActivity) getActivity()).getNumberOfTeams() )
                     && mCurrentTime > 0 ) {
                 try {
                     Thread.sleep(1000);
@@ -465,7 +465,7 @@ public class QuizQuestionFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if( !(mInCorrectTeams.size() + mCorrectTeams.size() == ((MainActivity) getActivity()).getNumberOfTeams() ) ) {
+            if( getActivity() != null && !((mInCorrectTeams.size() + mCorrectTeams.size()) == ((MainActivity) getActivity()).getNumberOfTeams() ) ) {
                 displayCorrectTeams();
             }
         }
@@ -538,8 +538,6 @@ public class QuizQuestionFragment extends Fragment {
             imageBlocks.add(7);
             imageBlocks.add(8);
             imageBlocks.add(9);
-
-
         }
     }
 

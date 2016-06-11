@@ -17,8 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@+id/avery_tab"
-        android:textSize="28sp"
+        android:textSize="42sp"
         android:fontFamily="serif"
+        android:text="Winner!"
         android:textColor="@android:color/white"
         android:textStyle="bold" />
 
@@ -31,6 +32,6 @@
         android:textSize="28sp"
         android:fontFamily="serif"
         android:textColor="@android:color/white"
-        android:paddingTop="48dp"/>
+        android:paddingTop="28dp"/>
 
 </RelativeLayout>

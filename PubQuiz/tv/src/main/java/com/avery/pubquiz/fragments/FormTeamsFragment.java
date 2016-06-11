@@ -25,10 +25,9 @@ public class FormTeamsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
         ((MainActivity) getActivity()).startAdvertising();
     }
-
 }
