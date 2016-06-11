@@ -1,13 +1,16 @@
 package com.avery.pubquiz.activities;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.avery.networking.model.Question;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
+import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
@@ -15,6 +18,7 @@ import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
 import com.avery.pubquiz.fragments.QuizQuestionFragment;
+import com.avery.pubquiz.fragments.WinningFragment;
 
 import java.util.ArrayList;
 
@@ -22,11 +26,16 @@ public class MainActivity extends Activity implements NearbyHostCallback {
 
     ArrayList<String> clientNames = new ArrayList<>();
     ArrayList<Client> mClients = new ArrayList<>();
+    ArrayList<Integer> mTeamScores = new ArrayList<>();
+
+    private Fragment mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initFragment();
     }
@@ -42,7 +51,8 @@ public class MainActivity extends Activity implements NearbyHostCallback {
     }
 
     private void initFragment() {
-        getFragmentManager().beginTransaction().replace(R.id.container, FormTeamsFragment.getInstance()).commit();
+        mCurrentFragment = FormTeamsFragment.getInstance();
+        getFragmentManager().beginTransaction().replace(R.id.container, mCurrentFragment).commit();
     }
 
     @Override
@@ -78,6 +88,7 @@ public class MainActivity extends Activity implements NearbyHostCallback {
                 clientNames.add(registerMessage.teamName);
                 client.setName(registerMessage.teamName);
                 mClients.add(client);
+                mTeamScores.add(0);
                 NearbyManager.getInstance().sendTeamRegisteredResponse(client, new RegisterResponseMessage(true));
 
                 if( clientNames.size() >= 1 ) {
@@ -91,7 +102,8 @@ public class MainActivity extends Activity implements NearbyHostCallback {
     }
 
     private void loadQuiz() {
-        getFragmentManager().beginTransaction().replace(R.id.container, QuizQuestionFragment.getInstance()).commit();
+        mCurrentFragment = QuizQuestionFragment.getInstance();
+        getFragmentManager().beginTransaction().replace(R.id.container, mCurrentFragment).commit();
     }
 
     @Override
@@ -102,5 +114,54 @@ public class MainActivity extends Activity implements NearbyHostCallback {
     @Override
     public void handleMessage(String endpointId, BaseMessage message) {
         Log.e("nearby", "message: " + message );
+
+        if( message instanceof AnswerMessage ) {
+            AnswerMessage answerMessage = (AnswerMessage) message;
+            Log.e("Nearby", "answer! " + answerMessage.answer);
+
+            if( mCurrentFragment instanceof QuizQuestionFragment ) {
+                for( Client client : mClients ) {
+                    if( client.getEndpointId().equalsIgnoreCase(endpointId) ) {
+                        ((QuizQuestionFragment) mCurrentFragment).answerReceived(client, answerMessage);
+                    }
+                }
+            }
+        }
+    }
+
+    public void addToClientScore(Client client, int clientScore) {
+        mTeamScores.set(mClients.indexOf(client), mTeamScores.get(mClients.indexOf(client)) + clientScore);
+
+        Log.e("Quiz", "Team: " + client.getName() + " score: " + mTeamScores.get(mClients.indexOf(client)));
+    }
+
+    public Client checkForWinner() {
+        //check for ties or a specific winner
+        Client winningClient = null;
+        Integer highestScore = 0;
+        for( int i = 0; i < mTeamScores.size(); i++ ) {
+            if( highestScore < mTeamScores.get(i) ) {
+                winningClient = mClients.get(i);
+                highestScore = mTeamScores.get(i);
+            }
+        }
+        //return null if tie
+
+        return winningClient;
+    }
+
+    public void showWinner() {
+        Client winningClient = checkForWinner();
+
+        if( winningClient != null ) {
+            mCurrentFragment = WinningFragment.getInstance(winningClient.getName(), mTeamScores.get(mClients.indexOf(winningClient)));
+            getFragmentManager().beginTransaction().replace(R.id.container, mCurrentFragment).commit();
+        }
+
+
+    }
+
+    public int getNumberOfTeams() {
+        return mClients.size();
     }
 }
