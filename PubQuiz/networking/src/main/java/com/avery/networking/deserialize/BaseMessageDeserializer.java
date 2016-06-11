@@ -7,6 +7,8 @@ import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
+import com.avery.networking.nearby.messages.ScoreUpdateMessage;
+import com.avery.networking.nearby.messages.WinnerMessage;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -43,12 +45,24 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
             return answerMessage;
         }else if( "question".equalsIgnoreCase(messageType) ) {
             QuestionMessage questionMessage = new QuestionMessage();
-            questionMessage.question = json.getAsJsonObject().get("question").getAsString();
-            questionMessage.A = json.getAsJsonObject().get("A").getAsString();
-            questionMessage.B = json.getAsJsonObject().get("B").getAsString();
-            questionMessage.C = json.getAsJsonObject().get("C").getAsString();
-            questionMessage.D = json.getAsJsonObject().get("D").getAsString();
+            questionMessage.questionType = json.getAsJsonObject().get("questionType").getAsString();
+            if( "multiple-choice".equalsIgnoreCase(questionMessage.questionType)) {
+                questionMessage.question = json.getAsJsonObject().get("question").getAsString();
+                questionMessage.A = json.getAsJsonObject().get("A").getAsString();
+                questionMessage.B = json.getAsJsonObject().get("B").getAsString();
+                questionMessage.C = json.getAsJsonObject().get("C").getAsString();
+                questionMessage.D = json.getAsJsonObject().get("D").getAsString();
+            }
             return questionMessage;
+        } else if( "winner".equalsIgnoreCase(messageType) ) {
+            WinnerMessage winnerMessage = new WinnerMessage();
+            winnerMessage.winner = json.getAsJsonObject().get("winner").getAsString();
+            return winnerMessage;
+        }else if("score-update".equalsIgnoreCase(messageType)) {
+            String teamName = json.getAsJsonObject().get("teamName").getAsString();
+            int score = json.getAsJsonObject().get("score").getAsInt();
+            ScoreUpdateMessage scoreUpdateMessage = new ScoreUpdateMessage(teamName, score);
+            return scoreUpdateMessage;
         } else {
             message = new BaseMessage();
             message.messageType = messageType;

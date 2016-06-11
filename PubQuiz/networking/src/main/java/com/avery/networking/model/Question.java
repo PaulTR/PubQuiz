@@ -2,6 +2,11 @@ package com.avery.networking.model;
 
 public class Question {
 
+    private String questionType;
+    //multiple-choice
+    //pour
+    //guess-image
+
     private String question;
     private String A;
     private String B;
@@ -57,5 +62,12 @@ public class Question {
         this.answer = answer;
     }
 
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
 
 }

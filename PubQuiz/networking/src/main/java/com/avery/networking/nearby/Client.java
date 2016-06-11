@@ -1,9 +1,11 @@
 package com.avery.networking.nearby;
 
+import java.io.Serializable;
+
 /**
  * Created by mark on 6/10/16.
  */
-public class Client {
+public class Client implements Serializable{
 
     private String mName;
     private String mClientId;

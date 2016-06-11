@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,22 +9,18 @@
         android:layout_width="320dp"
         android:layout_height="220dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/avery_tab"/>
-
+        android:src="@drawable/avery_tab"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
-        android:id="@+id/win_lose_text"
-        android:layout_width="match_parent"
+        android:id="@+id/tv_tie"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/avery_tab"
-        android:layout_marginTop="64dp"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textSize="30sp"
-        android:fontFamily="serif"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textAllCaps="true"
-        android:gravity="center_horizontal"
-        android:text="Congratulations, You Win!"/>
+        android:fontFamily="serif"
+        android:textSize="28sp"
+        android:paddingLeft="20dp"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>
