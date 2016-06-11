@@ -71,6 +71,8 @@ public class LoadingFragment extends Fragment {
                 }
 
                 if(mLoadingFragmentActions != null) {
+                    mTeamNameSubmitButton.setEnabled(false);
+                    mTeamNameEditText.setEnabled(false);
                     mLoadingFragmentActions.onSetTeamName(teamName);
                 }
             }
@@ -82,6 +84,19 @@ public class LoadingFragment extends Fragment {
     public void setConnected() {
         mLoadingContainer.setVisibility(View.GONE);
         mTeamNameContainer.setVisibility(View.VISIBLE);
+    }
+
+
+    public void setWaitingForQuestion() {
+        mStatusText.setText("Waiting for game to start....");
+        mLoadingContainer.setVisibility(View.VISIBLE);
+        mTeamNameContainer.setVisibility(View.GONE);
+    }
+
+    public void setTeamNameNotAvailable() {
+        mTeamNameLabelText.setText("Name already in use. Choose another.");
+        mTeamNameSubmitButton.setEnabled(true);
+        mTeamNameEditText.setEnabled(true);
     }
 
 

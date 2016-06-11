@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
                 boolean successful = ((RegisterResponseMessage) message).isSuccessful;
                 if(successful) {
                     //show waiting for questions screen
+                    mLoadingFragment.setWaitingForQuestion();
+                }else {
+                    mLoadingFragment.setTeamNameNotAvailable();
                 }
             }else if(message instanceof QuestionMessage) {
                 //show question screen
