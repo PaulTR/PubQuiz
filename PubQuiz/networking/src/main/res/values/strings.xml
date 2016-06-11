@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Networking</string>
+
+    <string name="service_id">pubquiz_service_id</string>
 </resources>
