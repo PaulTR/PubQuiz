@@ -10,6 +10,7 @@ import com.avery.networking.R;
 import com.avery.networking.deserialize.BaseMessageDeserializer;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.PlayAgainMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
@@ -326,6 +327,11 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
         }
 
         Nearby.Connections.sendReliableMessage(mApiClient, clientIds, serializeMessage(winnerMessage));
+    }
+
+
+    public void sendIsPlaying(Host host, PlayAgainMessage message) {
+        Nearby.Connections.sendReliableMessage(mApiClient, host.getEndpointId(), serializeMessage(message));
     }
 
     private void sendMessage( String message, Client client ) {

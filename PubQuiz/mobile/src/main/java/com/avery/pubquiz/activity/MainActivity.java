@@ -12,6 +12,7 @@ import com.avery.networking.nearby.NearbyDiscoveryCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.PlayAgainMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.networking.nearby.messages.ScoreUpdateMessage;
@@ -173,5 +174,32 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         message.answer = answer;
         Log.e(TAG, "answer selected: " + answer);
         mManager.sendAnswer(mHost, message);
+    }
+
+
+    private void playAgain(boolean playAgain) {
+        PlayAgainMessage message = new PlayAgainMessage(playAgain);
+        NearbyManager.getInstance().sendIsPlaying(mHost, message);
+
+        if(playAgain) {
+            startGameOver();
+        }else {
+            closeApplication();
+        }
+    }
+
+
+    private void startGameOver() {
+
+        mLoadingFragment.setWaitingForQuestion();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        transaction.replace(R.id.content_frame, mLoadingFragment);
+        transaction.commit();
+    }
+
+
+    public void closeApplication() {
+        this.finishAffinity();
     }
 }
