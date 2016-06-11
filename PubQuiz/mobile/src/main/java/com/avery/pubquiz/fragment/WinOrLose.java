@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.avery.networking.nearby.Client;
@@ -18,7 +19,7 @@ import com.avery.pubquiz.R;
 /**
  * Created by geoff on 6/10/16.
  */
-public class WinOrLose extends Fragment {
+public class WinOrLose extends Fragment implements View.OnClickListener{
 
     private static final String KEY_CLIENT = "key_client";
     private static final String KEY_MESSAGE = "key_message";
@@ -36,8 +37,10 @@ public class WinOrLose extends Fragment {
         return winOrLose;
     }
 
-
     private TextView mWinLoseText;
+
+    private Button mYesButton;
+    private Button mNoButton;
 
 
     @Nullable
@@ -55,12 +58,16 @@ public class WinOrLose extends Fragment {
 
         mWinLoseText = (TextView) view.findViewById(R.id.win_lose_text);
 
+        mYesButton = (Button) view.findViewById(R.id.yes_button);
+        mNoButton = (Button) view.findViewById(R.id.no_button);
+
         Bundle args = getArguments();
         Client client = (Client) args.getSerializable(KEY_CLIENT);
         WinnerMessage message = (WinnerMessage) args.getSerializable(KEY_MESSAGE);
 
-        Log.e(TAG, "CLIENT NAME : " + client.getName());
-        Log.e(TAG, "WINNER : " + message.getWinner());
+
+
+
         if (client.getName().equalsIgnoreCase(message.getWinner())) {
             mWinLoseText.setText("Congratulations, You Win!");
         } else {
@@ -70,5 +77,10 @@ public class WinOrLose extends Fragment {
         Vibrator v = (Vibrator) view.getContext().getSystemService(Context.VIBRATOR_SERVICE);
         long pattern[]={0,800};
         v.vibrate(pattern, -1);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
     }
 }
