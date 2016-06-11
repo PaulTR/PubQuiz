@@ -130,11 +130,29 @@ public class QuizQuestionFragment extends Fragment {
             mCorrectTeamsContainer.setVisibility(View.VISIBLE);
         }
 
-        new LoadNextQuestion().execute();
+        new showQuestionResultTask().execute();
+    }
+
+    public class QuestionTimerTask extends AsyncTask<Void, Integer, Void> {
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
     }
 
 
-    public class LoadNextQuestion extends AsyncTask<Void, Void, Void> {
+    public class showQuestionResultTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -156,5 +174,7 @@ public class QuizQuestionFragment extends Fragment {
             }
         }
     }
+
+
 
 }
