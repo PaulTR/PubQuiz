@@ -2,6 +2,7 @@ package com.avery.pubquiz.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.avery.networking.nearby.Client;
@@ -39,6 +42,7 @@ public class WinOrLose extends Fragment implements View.OnClickListener{
 
     private TextView mWinLoseText;
 
+    private RelativeLayout mPlayAgainContainer;
     private Button mYesButton;
     private Button mNoButton;
 
@@ -60,15 +64,16 @@ public class WinOrLose extends Fragment implements View.OnClickListener{
 
         mWinLoseText = (TextView) view.findViewById(R.id.win_lose_text);
 
+        mPlayAgainContainer = (RelativeLayout) view.findViewById(R.id.play_again_container);
         mYesButton = (Button) view.findViewById(R.id.yes_button);
         mNoButton = (Button) view.findViewById(R.id.no_button);
+
+        mYesButton.setOnClickListener(this);
+        mNoButton.setOnClickListener(this);
 
         Bundle args = getArguments();
         Client client = (Client) args.getSerializable(KEY_CLIENT);
         WinnerMessage message = (WinnerMessage) args.getSerializable(KEY_MESSAGE);
-
-
-
 
         if (client.getName().equalsIgnoreCase(message.getWinner())) {
             mWinLoseText.setText("Congratulations, You Win!");
@@ -79,6 +84,17 @@ public class WinOrLose extends Fragment implements View.OnClickListener{
         Vibrator v = (Vibrator) view.getContext().getSystemService(Context.VIBRATOR_SERVICE);
         long pattern[]={0,800};
         v.vibrate(pattern, -1);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                mPlayAgainContainer.setVisibility(View.VISIBLE);
+                mPlayAgainContainer.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_up));
+
+            }
+        }, 2000);
     }
 
     @Override
