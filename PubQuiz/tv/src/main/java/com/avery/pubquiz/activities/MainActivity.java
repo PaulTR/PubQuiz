@@ -13,6 +13,7 @@ import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.PlayAgainMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
@@ -138,6 +139,8 @@ public class MainActivity extends Activity implements NearbyHostCallback {
                     }
                 }
             }
+        } else if( message instanceof PlayAgainMessage ) {
+            initFragment();
         }
     }
 

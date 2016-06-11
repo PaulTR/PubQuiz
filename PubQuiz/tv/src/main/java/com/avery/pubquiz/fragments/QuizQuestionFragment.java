@@ -109,6 +109,10 @@ public class QuizQuestionFragment extends Fragment {
 
     private void loadImageQuestions() {
 
+        mEveryonesWrongContainer.setVisibility(View.GONE);
+        mCorrectTeamsContainer.setVisibility(View.GONE);
+        mImageQuestionContainer.setVisibility(View.VISIBLE);
+
         mImageBlocker1.setVisibility(View.VISIBLE);
         mImageBlocker2.setVisibility(View.VISIBLE);
         mImageBlocker3.setVisibility(View.VISIBLE);
@@ -120,15 +124,18 @@ public class QuizQuestionFragment extends Fragment {
         mImageBlocker9.setVisibility(View.VISIBLE);
 
         mTimerTextView.setVisibility(View.GONE);
-        imageBlocks.add(1);
-        imageBlocks.add(2);
-        imageBlocks.add(3);
-        imageBlocks.add(4);
-        imageBlocks.add(5);
-        imageBlocks.add(6);
-        imageBlocks.add(7);
-        imageBlocks.add(8);
-        imageBlocks.add(9);
+        if( imageBlocks.isEmpty() ) {
+            imageBlocks.add(1);
+            imageBlocks.add(2);
+            imageBlocks.add(3);
+            imageBlocks.add(4);
+            imageBlocks.add(5);
+            imageBlocks.add(6);
+            imageBlocks.add(7);
+            imageBlocks.add(8);
+            imageBlocks.add(9);
+        }
+
         mMultipleChoiceContainer.setVisibility(View.GONE);
 
         final List<String> beerIds = new ArrayList<>();
@@ -367,17 +374,17 @@ public class QuizQuestionFragment extends Fragment {
         mEveryonesWrongContainer.setVisibility(View.GONE);
 
         Random random = new Random();
-        int selection = random.nextInt(5);
+        int selection = random.nextInt(8);
 
 
         if( selection == 0 ) {
-            loadImageQuestions();
+            loadBeerQuestions();
         }
         else {
             if( random.nextBoolean() ) {
                 loadMultipleChoiceQuestion();
             } else {
-                loadBeerQuestions();
+                loadImageQuestions();
             }
         }
     }
@@ -409,12 +416,14 @@ public class QuizQuestionFragment extends Fragment {
     }
 
     private void displayCorrectTeams() {
+        Log.e("Quiz", "displayCorrectTeam");
         mQuestionContainer.setVisibility(View.GONE);
 
         if( mCorrectTeams.isEmpty() ) {
             Log.e("Quiz", "Everybodys wrong");
             mEveryonesWrongContainer.setVisibility(View.VISIBLE);
         } else {
+            Log.e("Quiz", "show winners");
             mTeam2.setVisibility(View.GONE);
             if( mCorrectTeams.size() >= 1 ) {
                 mTeam1.setText(mCorrectTeams.get(0).getName());
@@ -473,54 +482,35 @@ public class QuizQuestionFragment extends Fragment {
             }
 
             Random random = new Random();
-            int item = random.nextInt(imageBlocks.size());
+            int item = random.nextInt(imageBlocks.size());//random.nextInt(imageBlocks.size());
             int block = imageBlocks.get(item);
             imageBlocks.remove(item);
             Log.e("blocks", "onProgressUpdate : Item : " + item);
-            switch( block ) {
-                case 1: {
-                    mImageBlocker1.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 2: {
-                    mImageBlocker2.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 3: {
-                    mImageBlocker3.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 4: {
-                    mImageBlocker4.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 5: {
-                    mImageBlocker5.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 6: {
-                    mImageBlocker6.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 7: {
-                    mImageBlocker7.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 8: {
-                    mImageBlocker8.setVisibility(View.INVISIBLE);
-                    break;
-                }
-                case 9: {
-                    mImageBlocker9.setVisibility(View.INVISIBLE);
-                    break;
-                }
-
+            if( block == 1 ) {
+                mImageBlocker1.setVisibility(View.INVISIBLE);
+            } else if( block == 2 ) {
+                mImageBlocker2.setVisibility(View.INVISIBLE);
+            } else if( block == 3 ) {
+                mImageBlocker3.setVisibility(View.INVISIBLE);
+            } else if( block == 4 ) {
+                mImageBlocker4.setVisibility(View.INVISIBLE);
+            } else if( block == 5 ) {
+                mImageBlocker5.setVisibility(View.INVISIBLE);
+            } else if( block == 6 ) {
+                mImageBlocker6.setVisibility(View.INVISIBLE);
+            } else if( block == 7 ) {
+                mImageBlocker7.setVisibility(View.INVISIBLE);
+            } else if( block == 8 ) {
+                mImageBlocker8.setVisibility(View.INVISIBLE);
+            } else if( block == 9 ) {
+                mImageBlocker9.setVisibility(View.INVISIBLE);
             }
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             Log.e("blocks", "block size : " + imageBlocks.size());
+            Log.e("Quiz", "mCorrectTeams empty: " + mCorrectTeams.isEmpty() );
             while( imageBlocks.size() > 0 && mCorrectTeams.isEmpty() ) {
                 try {
                     Thread.sleep(3000);
@@ -537,6 +527,19 @@ public class QuizQuestionFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             displayCorrectTeams();
+            imageBlocks.clear();
+
+            imageBlocks.add(1);
+            imageBlocks.add(2);
+            imageBlocks.add(3);
+            imageBlocks.add(4);
+            imageBlocks.add(5);
+            imageBlocks.add(6);
+            imageBlocks.add(7);
+            imageBlocks.add(8);
+            imageBlocks.add(9);
+
+
         }
     }
 
@@ -559,6 +562,7 @@ public class QuizQuestionFragment extends Fragment {
                 Log.e("Quiz", "mCurrentQuestionNumber: " + mCurrentQuestionNumber );
                 showWinner();
             } else {
+                Log.e("Quiz", "onPostExecute showQuestionResultTask");
                 loadQuestion();
             }
         }
