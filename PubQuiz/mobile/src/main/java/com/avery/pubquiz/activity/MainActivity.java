@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     public void onAnswerSelected(String answer) {
         AnswerMessage message = new AnswerMessage();
         message.answer = answer;
+        Log.e(TAG, "answer selected: " + answer);
         mManager.sendAnswer(mHost, message);
     }
 }

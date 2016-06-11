@@ -11,6 +11,7 @@ public class QuestionMessage extends BaseMessage implements Serializable {
     public String B;
     public String C;
     public String D;
+    public String questionType;
 
     public QuestionMessage() {
         messageType = "question";
@@ -18,6 +19,7 @@ public class QuestionMessage extends BaseMessage implements Serializable {
 
     public QuestionMessage(Question question) {
         this();
+        this.questionType = question.getQuestionType();
         this.question = question.getQuestion();
         this.A = question.getA();
         this.B = question.getB();

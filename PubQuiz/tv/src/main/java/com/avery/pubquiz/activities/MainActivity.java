@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.avery.networking.model.Question;
 import com.avery.networking.nearby.Client;
@@ -18,11 +19,15 @@ import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
 import com.avery.pubquiz.fragments.QuizQuestionFragment;
+import com.avery.pubquiz.fragments.TieBreakerFragment;
 import com.avery.pubquiz.fragments.WinningFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity implements NearbyHostCallback {
+
+    private final int MIN_NUMBER_OF_PLAYERS = 2;
 
     ArrayList<String> clientNames = new ArrayList<>();
     ArrayList<Client> mClients = new ArrayList<>();
@@ -91,7 +96,7 @@ public class MainActivity extends Activity implements NearbyHostCallback {
                 mTeamScores.add(0);
                 NearbyManager.getInstance().sendTeamRegisteredResponse(client, new RegisterResponseMessage(true));
 
-                if( clientNames.size() >= 1 ) {
+                if( clientNames.size() >= MIN_NUMBER_OF_PLAYERS ) {
                     loadQuiz();
                 }
             } else {
@@ -125,6 +130,12 @@ public class MainActivity extends Activity implements NearbyHostCallback {
                         ((QuizQuestionFragment) mCurrentFragment).answerReceived(client, answerMessage);
                     }
                 }
+            } else if( mCurrentFragment instanceof TieBreakerFragment ) {
+                for( Client client : mClients ) {
+                    if( client.getEndpointId().equalsIgnoreCase(endpointId)) {
+                        ((TieBreakerFragment) mCurrentFragment).answerReceived( client, answerMessage);
+                    }
+                }
             }
         }
     }
@@ -139,11 +150,18 @@ public class MainActivity extends Activity implements NearbyHostCallback {
         //check for ties or a specific winner
         Client winningClient = null;
         Integer highestScore = 0;
+        Integer tieScore = 0;
         for( int i = 0; i < mTeamScores.size(); i++ ) {
             if( highestScore < mTeamScores.get(i) ) {
                 winningClient = mClients.get(i);
                 highestScore = mTeamScores.get(i);
+            } else if( highestScore.equals(mTeamScores.get(i))) {
+                tieScore = highestScore;
             }
+        }
+
+        if( tieScore.equals(highestScore)) {
+            return null;
         }
         //return null if tie
 
@@ -157,8 +175,36 @@ public class MainActivity extends Activity implements NearbyHostCallback {
             mCurrentFragment = WinningFragment.getInstance(winningClient.getName(), mTeamScores.get(mClients.indexOf(winningClient)));
             getFragmentManager().beginTransaction().replace(R.id.container, mCurrentFragment).commit();
         }
+        
+        else {
+            showTieBreaker();
+        }
 
+    }
 
+    private void showTieBreaker() {
+        int highestScore = 0;
+        for( Integer score : mTeamScores ) {
+            if( score > highestScore ) {
+                highestScore = score;
+            }
+        }
+
+        List<Integer> indicies = new ArrayList<>();
+
+        for( int i = 0; i < mTeamScores.size(); i++ ) {
+            if( mTeamScores.get(i).equals(highestScore) ) {
+                indicies.add(i);
+            }
+        }
+
+        ArrayList<String> clients = new ArrayList<>();
+        for( Integer index : indicies ) {
+            clients.add(mClients.get(index).getName());
+        }
+
+        mCurrentFragment = TieBreakerFragment.getInstance(clients, highestScore);
+        getFragmentManager().beginTransaction().replace(R.id.container, mCurrentFragment).commit();
     }
 
     public int getNumberOfTeams() {

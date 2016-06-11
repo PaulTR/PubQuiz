@@ -43,11 +43,14 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
             return answerMessage;
         }else if( "question".equalsIgnoreCase(messageType) ) {
             QuestionMessage questionMessage = new QuestionMessage();
-            questionMessage.question = json.getAsJsonObject().get("question").getAsString();
-            questionMessage.A = json.getAsJsonObject().get("A").getAsString();
-            questionMessage.B = json.getAsJsonObject().get("B").getAsString();
-            questionMessage.C = json.getAsJsonObject().get("C").getAsString();
-            questionMessage.D = json.getAsJsonObject().get("D").getAsString();
+            questionMessage.questionType = json.getAsJsonObject().get("questionType").getAsString();
+            if( "multiple-choice".equalsIgnoreCase(questionMessage.questionType)) {
+                questionMessage.question = json.getAsJsonObject().get("question").getAsString();
+                questionMessage.A = json.getAsJsonObject().get("A").getAsString();
+                questionMessage.B = json.getAsJsonObject().get("B").getAsString();
+                questionMessage.C = json.getAsJsonObject().get("C").getAsString();
+                questionMessage.D = json.getAsJsonObject().get("D").getAsString();
+            }
             return questionMessage;
         } else {
             message = new BaseMessage();

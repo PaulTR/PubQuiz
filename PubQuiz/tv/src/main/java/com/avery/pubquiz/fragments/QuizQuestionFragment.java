@@ -68,10 +68,22 @@ public class QuizQuestionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadData();
+        loadJsonQuestions();
 
         initViews(view);
         loadQuestion();
+    }
+
+    private void loadImageQuestions() {
+
+    }
+
+    private void loadBeerQuestions() {
+
+    }
+
+    private void showTieBreaker() {
+
     }
 
     private void initViews(View view) {
@@ -103,6 +115,7 @@ public class QuizQuestionFragment extends Fragment {
         mEveryonesWrongContainer.setVisibility(View.GONE);
         mCurrentQuestion = mQuestions.get( ((new Random()).nextInt(10)) );
 
+        mCurrentQuestion.setQuestionType("multiple-choice");
         mQuestionTextView.setText(mCurrentQuestion.getQuestion());
         mAnswerTextViewA.setText(mCurrentQuestion.getA());
         mAnswerTextViewB.setText(mCurrentQuestion.getB());
@@ -111,10 +124,11 @@ public class QuizQuestionFragment extends Fragment {
 
         mTimerTextView.setText(String.valueOf(mCurrentTime));
         ((MainActivity) getActivity()).sendQuestion( mCurrentQuestion );
+
         new QuestionTimerTask().execute();
     }
 
-    private void loadData() {
+    private void loadJsonQuestions() {
         String json = Utils.loadJSONFromResource( getActivity(), R.raw.questions );
         Gson gson = new Gson();
         Type collection = new TypeToken<ArrayList<Question>>(){}.getType();
@@ -147,11 +161,13 @@ public class QuizQuestionFragment extends Fragment {
             Log.e("Quiz", "Everybodys wrong");
             mEveryonesWrongContainer.setVisibility(View.VISIBLE);
         } else {
+            mTeam2.setVisibility(View.GONE);
             if( mCorrectTeams.size() >= 1 ) {
                 mTeam1.setText(mCorrectTeams.get(0).getName());
             }
             if( mCorrectTeams.size() >= 2 ) {
                 mTeam2.setText(mCorrectTeams.get(1).getName());
+                mTeam2.setVisibility(View.VISIBLE);
             }
             mCorrectTeamsContainer.setVisibility(View.VISIBLE);
         }

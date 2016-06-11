@@ -6,8 +6,25 @@ package com.avery.networking.nearby.messages;
 public class AnswerMessage extends BaseMessage{
 
     public String answer;
+    public String answerType;
 
     public AnswerMessage() {
         messageType = "answer";
+    }
+
+    public String getAnswerType() {
+        return answerType;
+    }
+
+    public void setAnswerType(String answerType) {
+        this.answerType = answerType;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 }
