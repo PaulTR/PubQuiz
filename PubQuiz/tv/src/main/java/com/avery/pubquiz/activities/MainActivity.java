@@ -81,4 +81,9 @@ public class MainActivity extends Activity implements NearbyHostCallback {
     public void onConnectionFailed(int statusCode) {
         Log.e("Nearby", "onConnectionFailed");
     }
+
+    @Override
+    public void handleMessage(String endpointId, BaseMessage message) {
+        Log.e("nearby", "message: " + message );
+    }
 }
