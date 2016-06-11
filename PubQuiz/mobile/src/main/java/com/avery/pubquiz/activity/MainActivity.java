@@ -1,6 +1,7 @@
 package com.avery.pubquiz.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,7 +23,8 @@ import com.avery.pubquiz.fragment.LoadingFragment;
 import com.avery.pubquiz.fragment.SelectAnswer;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback,
-        LoadingFragment.LoadingFragmentActions {
+        LoadingFragment.LoadingFragmentActions,
+        SelectAnswer.SelectAnswerActions {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     protected void onStart() {
         super.onStart();
         mManager.initialize(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mManager.disconnect();
     }
 
     @Override
@@ -121,7 +129,12 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
     private void showQuestionFragment(QuestionMessage message) {
         SelectAnswer selectAnswerFragment = SelectAnswer.getInstance(message);
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, selectAnswerFragment).commit();
+        selectAnswerFragment.setSelectAnswerActions(this);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, selectAnswerFragment);
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        transaction.commit();
     }
 
 
@@ -129,5 +142,12 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     public void onSetTeamName(String teamName) {
         mClient.setName(teamName);
         mManager.connectToHost(mHost, mClient);
+    }
+
+    @Override
+    public void onAnswerSelected(String answer) {
+        AnswerMessage message = new AnswerMessage();
+        message.answer = answer;
+        mManager.sendAnswer(mHost, message);
     }
 }
