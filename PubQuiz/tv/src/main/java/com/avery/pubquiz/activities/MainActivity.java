@@ -18,6 +18,7 @@ import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragments.FormTeamsFragment;
 import com.avery.pubquiz.fragments.QuizQuestionFragment;
+import com.avery.pubquiz.fragments.WinningFragment;
 
 import java.util.ArrayList;
 
@@ -132,6 +133,32 @@ public class MainActivity extends Activity implements NearbyHostCallback {
         mTeamScores.set(mClients.indexOf(client), mTeamScores.get(mClients.indexOf(client)) + clientScore);
 
         Log.e("Quiz", "Team: " + client.getName() + " score: " + mTeamScores.get(mClients.indexOf(client)));
+    }
+
+    public Client checkForWinner() {
+        //check for ties or a specific winner
+        Client winningClient = null;
+        Integer highestScore = 0;
+        for( int i = 0; i < mTeamScores.size(); i++ ) {
+            if( highestScore < mTeamScores.get(i) ) {
+                winningClient = mClients.get(i);
+                highestScore = mTeamScores.get(i);
+            }
+        }
+        //return null if tie
+
+        return winningClient;
+    }
+
+    public void showWinner() {
+        Client winningClient = checkForWinner();
+
+        if( winningClient != null ) {
+            mCurrentFragment = WinningFragment.getInstance(winningClient.getName(), mTeamScores.get(mClients.indexOf(winningClient)));
+            getFragmentManager().beginTransaction().replace(R.id.container, mCurrentFragment).commit();
+        }
+
+
     }
 
     public int getNumberOfTeams() {

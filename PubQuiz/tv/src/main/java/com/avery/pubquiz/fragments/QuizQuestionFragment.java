@@ -27,7 +27,7 @@ import java.util.Random;
 
 public class QuizQuestionFragment extends Fragment {
 
-    private int mCurrentQuestionNumber = 1;
+    private int mCurrentQuestionNumber = 0;
     private int mMaxNumberOfQuestions = 10;
 
     private RelativeLayout mQuestionContainer;
@@ -80,6 +80,7 @@ public class QuizQuestionFragment extends Fragment {
     }
 
     private void loadQuestion() {
+        mCurrentQuestionNumber++;
         mCorrectTeams.clear();
         mInCorrectTeams.clear();
         mQuestionContainer.setVisibility(View.VISIBLE);
@@ -117,7 +118,7 @@ public class QuizQuestionFragment extends Fragment {
         mQuestionContainer.setVisibility(View.GONE);
 
         if( mCorrectTeams.isEmpty() ) {
-            Log.e("Quiz", "Everybody wrong");
+            Log.e("Quiz", "Everybodys wrong");
             mEveryonesWrongContainer.setVisibility(View.VISIBLE);
         } else {
             if( mCorrectTeams.size() >= 1 ) {
@@ -138,7 +139,7 @@ public class QuizQuestionFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             } catch(InterruptedException e ) {
 
             }
@@ -148,7 +149,11 @@ public class QuizQuestionFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            loadQuestion();
+            if( mCurrentQuestionNumber >= mMaxNumberOfQuestions ) {
+                ((MainActivity) getActivity()).showWinner();
+            } else {
+                loadQuestion();
+            }
         }
     }
 
