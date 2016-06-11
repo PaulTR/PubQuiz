@@ -29,9 +29,13 @@ public class QuizQuestionFragment extends Fragment {
 
     private int mCurrentQuestionNumber = 0;
     private int mMaxNumberOfQuestions = 10;
+    private int mTimePerQuestion = 15;
+    private int mCurrentTime;
+
 
     private RelativeLayout mQuestionContainer;
     private TextView mQuestionTextView;
+    private TextView mTimerTextView;
 
     private RelativeLayout mCorrectTeamsContainer;
     private TextView mTeam1;
@@ -68,6 +72,7 @@ public class QuizQuestionFragment extends Fragment {
     private void initViews(View view) {
         mQuestionContainer = (RelativeLayout) view.findViewById(R.id.container_question);
         mQuestionTextView = (TextView) view.findViewById(R.id.tv_question);
+        mTimerTextView = (TextView) view.findViewById(R.id.tv_time);
 
         mCorrectTeamsContainer = (RelativeLayout) view.findViewById(R.id.container_correct_teams);
         mTeam1 = (TextView) view.findViewById(R.id.tv_team_1);
@@ -81,6 +86,7 @@ public class QuizQuestionFragment extends Fragment {
 
     private void loadQuestion() {
         mCurrentQuestionNumber++;
+        mCurrentTime = mTimePerQuestion;
         mCorrectTeams.clear();
         mInCorrectTeams.clear();
         mQuestionContainer.setVisibility(View.VISIBLE);
@@ -88,7 +94,9 @@ public class QuizQuestionFragment extends Fragment {
         mEveryonesWrongContainer.setVisibility(View.GONE);
         mCurrentQuestion = mQuestions.get( ((new Random()).nextInt(10)) );
         mQuestionTextView.setText(mCurrentQuestion.getQuestion());
+        mTimerTextView.setText(String.valueOf(mCurrentTime));
         ((MainActivity)getActivity()).sendQuestion( mCurrentQuestion );
+        new QuestionTimerTask().execute();
     }
 
     private void loadData() {
@@ -109,7 +117,6 @@ public class QuizQuestionFragment extends Fragment {
         //Everyone has answered
         if( mInCorrectTeams.size() + mCorrectTeams.size() == ((MainActivity) getActivity()).getNumberOfTeams() ) {
             //display who got it right, then load question
-            //loadQuestion();
             displayCorrectTeams();
         }
     }
@@ -138,16 +145,29 @@ public class QuizQuestionFragment extends Fragment {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
+            mTimerTextView.setText(String.valueOf(values[0]));
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            while ( !(mInCorrectTeams.size() + mCorrectTeams.size() == ((MainActivity) getActivity()).getNumberOfTeams() )
+                    && mCurrentTime > 0 ) {
+                try {
+                    Thread.sleep(1000);
+                } catch( InterruptedException e ) {
+
+                }
+
+                mCurrentTime--;
+                publishProgress(mCurrentTime);
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            displayCorrectTeams();
         }
     }
 
