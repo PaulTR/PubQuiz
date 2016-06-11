@@ -5,8 +5,11 @@ package com.avery.networking.nearby;
  */
 public interface NearbyDiscoveryCallback {
 
+    void onConnectedSuccess();
+    void onConnectedFailed();
     void onDiscoveringSuccess();
     void onDiscoveringFailed(int statusCode);
     void onEndpointLost(String endpointId);
-    void onEndpointFound(String endpointId, String endpointName);
+    void onEndpointFound(Host host, Client client);
+    void onConnectionResponse();
 }
