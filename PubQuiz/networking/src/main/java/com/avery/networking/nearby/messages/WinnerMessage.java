@@ -1,6 +1,8 @@
 package com.avery.networking.nearby.messages;
 
-public class WinnerMessage extends BaseMessage {
+import java.io.Serializable;
+
+public class WinnerMessage extends BaseMessage implements Serializable {
 
     public String winner;
 
