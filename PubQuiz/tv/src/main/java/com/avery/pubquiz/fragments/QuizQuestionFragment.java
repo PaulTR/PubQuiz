@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.avery.networking.model.Question;
 import com.avery.networking.model.beer.Beer;
 import com.avery.networking.model.beer.BeerList;
+import com.avery.networking.model.beer.BeerResult;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.services.AveryNetworkAdapter;
@@ -38,7 +39,7 @@ import retrofit2.Response;
 public class QuizQuestionFragment extends Fragment {
 
     private int mCurrentQuestionNumber = 0;
-    private int mMaxNumberOfQuestions = 1;
+    private int mMaxNumberOfQuestions = 10;
     private int mTimePerQuestion = 15;
     private int mCurrentTime;
 
@@ -62,6 +63,8 @@ public class QuizQuestionFragment extends Fragment {
     private View mImageBlocker7;
     private View mImageBlocker8;
     private View mImageBlocker9;
+
+    private BeerList mBeerList;
 
     private RelativeLayout mImageQuestionContainer;
 
@@ -99,8 +102,117 @@ public class QuizQuestionFragment extends Fragment {
         loadQuestion();
     }
 
-    private void loadImageQuestions() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
+    private void loadImageQuestions() {
+        imageBlocks.add(1);
+        imageBlocks.add(2);
+        imageBlocks.add(3);
+        imageBlocks.add(4);
+        imageBlocks.add(5);
+        imageBlocks.add(6);
+        imageBlocks.add(7);
+        imageBlocks.add(8);
+        imageBlocks.add(9);
+        mMultipleChoiceContainer.setVisibility(View.GONE);
+
+        final List<String> beerIds = new ArrayList<>();
+        beerIds.add("ipa");
+        beerIds.add("hog-heaven");
+        beerIds.add("joe-s-pils");
+        beerIds.add("liliko-i-kepolo");
+        beerIds.add("mephistopheles");
+        beerIds.add("old-jubiliation-ale");
+        beerIds.add("out-of-bounds-stout");
+        beerIds.add("perzik-saison");
+        beerIds.add("pump-ky-n");
+        beerIds.add("raja");
+        beerIds.add("raspberry-sour");
+        beerIds.add("rumpkin");
+        beerIds.add("salvation");
+        beerIds.add("samael-s");
+        beerIds.add("the-beast");
+        beerIds.add("the-czar");
+        beerIds.add("the-kaiser");
+        beerIds.add("the-maharaja");
+        beerIds.add("the-reverend");
+        beerIds.add("tweak");
+        beerIds.add("twenty-three-anniversary");
+        beerIds.add("uncle-jacob-s-stout");
+        beerIds.add("vanilla-bean-stout");
+        beerIds.add("white-rascal");
+        beerIds.add("ellie-s-brown-ale");
+
+        AveryNetworkAdapter.getInstance().getService().getBeers().enqueue(new Callback<BeerList>() {
+            @Override
+            public void onResponse(Call<BeerList> call, Response<BeerList> response) {
+                mBeerList = response.body();
+
+                Random random = new Random();
+                AveryNetworkAdapter.getInstance().getService().getBeer(beerIds.get(random.nextInt(beerIds.size()))).enqueue(new Callback<BeerResult>() {
+                    @Override
+                    public void onResponse(Call<BeerResult> call, Response<BeerResult> response) {
+                        Beer beer = response.body().getBeer();
+                        Glide.with(getActivity()).load(beer.getLabelImage().getDesktop2x()).into(mBeerImage);
+                        Question question = new Question();
+                        question.setQuestionType("multiple-choice");
+                        question.setQuestion("Name that beer!");
+                        Random randomAnswer = new Random();
+                        switch( randomAnswer.nextInt(4) ) {
+                            case 0: {
+                                question.setA(beer.getName());
+                                question.setAnswer("A");
+                                question.setB(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setC(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setD(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                break;
+                            }
+                            case 1: {
+                                question.setB(beer.getName());
+                                question.setAnswer("B");
+                                question.setA(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setC(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setD(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                break;
+                            }
+                            case 2: {
+                                question.setC(beer.getName());
+                                question.setAnswer("C");
+                                question.setB(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setA(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setD(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                break;
+                            }
+                            case 3: {
+                                question.setD(beer.getName());
+                                question.setAnswer("D");
+                                question.setB(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setC(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                question.setA(mBeerList.beers.get(randomAnswer.nextInt(beerIds.size())).getName());
+                                break;
+                            }
+                        }
+                        mCurrentQuestion = question;
+                        ((MainActivity) getActivity()).sendQuestion(question);
+
+                        new removeBeerBlockTask().execute();
+                    }
+
+                    @Override
+                    public void onFailure(Call<BeerResult> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<BeerList> call, Throwable t) {
+
+            }
+        });
     }
 
     private void loadBeerQuestions() {
@@ -168,35 +280,17 @@ public class QuizQuestionFragment extends Fragment {
         mCorrectTeamsContainer.setVisibility(View.GONE);
         mEveryonesWrongContainer.setVisibility(View.GONE);
 
-        //loadMultipleChoiceQuestion;
+        Random random = new Random();
+        int selection = random.nextInt(5);
+        if( selection == 0 ) {
+            loadImageQuestions();
+        }
+        else {
+            loadMultipleChoiceQuestion();
+        }
 
         //Image question
-        imageBlocks.add(1);
-        imageBlocks.add(2);
-        imageBlocks.add(3);
-        imageBlocks.add(4);
-        imageBlocks.add(5);
-        imageBlocks.add(6);
-        imageBlocks.add(7);
-        imageBlocks.add(8);
-        imageBlocks.add(9);
-        mMultipleChoiceContainer.setVisibility(View.GONE);
-        AveryNetworkAdapter.getInstance().getService().getBeers().enqueue(new Callback<BeerList>() {
-            @Override
-            public void onResponse(Call<BeerList> call, Response<BeerList> response) {
-                BeerList list = response.body();
-                Random random = new Random();
-                int randomInt = random.nextInt(list.beers.size());
-                Beer beer = list.beers.get(random.nextInt(randomInt));
-                Glide.with(getActivity()).load(beer.getLabelImage().getDesktop2x()).into(mBeerImage);
-                new removeBeerBlockTask().execute();
-            }
 
-            @Override
-            public void onFailure(Call<BeerList> call, Throwable t) {
-
-            }
-        });
     }
 
     private void loadJsonQuestions() {
@@ -345,6 +439,12 @@ public class QuizQuestionFragment extends Fragment {
                 publishProgress();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            displayCorrectTeams();
         }
     }
 
