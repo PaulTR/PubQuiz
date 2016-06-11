@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     @Override
     protected void onStart() {
         super.onStart();
-        //mManager.initialize(this);
+        mManager.initialize(this);
     }
 
     @Override
