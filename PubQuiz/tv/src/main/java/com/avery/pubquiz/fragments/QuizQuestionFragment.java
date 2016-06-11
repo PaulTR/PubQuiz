@@ -219,14 +219,14 @@ public class QuizQuestionFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<BeerResult> call, Throwable t) {
-
+                        Log.e("blocks", "beer load failure");
                     }
                 });
             }
 
             @Override
             public void onFailure(Call<BeerList> call, Throwable t) {
-
+                Log.e("blocks", "error loading beer list");
             }
         });
     }
