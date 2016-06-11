@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.avery.networking.flowmeter.TapFlowManager;
 import com.avery.networking.model.Question;
+import com.avery.networking.model.beer.Beer;
 import com.avery.networking.model.tap.TapBeer;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.messages.AnswerMessage;
@@ -88,12 +89,15 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("Beer size", "size: " + tapBeerList.size());
                 Random random = new Random();
-                mTieBreakerTextView.setText("Tied Game! Winning teams, guess how much beer is in the keg of " + tapBeerList.get(0).getBeerName() + "!\n" + teamNames);
-                mAmountRemaining = tapBeerList.get(random.nextInt(tapBeerList.size())).getAmountRemaining();
+                int randInt = random.nextInt(tapBeerList.size());
+                mTieBreakerTextView.setText("Tied Game! Winning teams, guess how much beer is in the keg of " + tapBeerList.get(randInt).getBeerName() + "!\n" + teamNames);
+                mAmountRemaining = tapBeerList.get(randInt).getAmountRemaining();
 
                 Question question = new Question();
                 question.setQuestionType("pour");
+                question.setQuestion("How much beer is remaining in the current keg of " + tapBeerList.get(randInt).getBeerName());
                 ((MainActivity) getActivity()).sendQuestion(question);
                 Log.e("Quiz", "amount: " + mAmountRemaining );
             }
@@ -112,7 +116,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
         Client closestGuesser = null;
 
         for (Map.Entry<Client, Integer> entry : receivedAnswers.entrySet()) {
-            if( Math.abs( (mAmountRemaining - entry.getValue() ) ) > guessDistance ) {
+            if( Math.abs( (mAmountRemaining - entry.getValue() ) ) < guessDistance ) {
                 guessDistance = Math.abs(mAmountRemaining - entry.getValue());
                 closestGuesser = entry.getKey();
             }

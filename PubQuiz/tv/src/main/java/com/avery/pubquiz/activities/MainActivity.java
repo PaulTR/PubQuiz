@@ -89,7 +89,7 @@ public class MainActivity extends Activity implements NearbyHostCallback {
             Log.e("Nearby", "is register message");
             RegisterMessage registerMessage = (RegisterMessage) message;
             if( !clientNames.contains(registerMessage.teamName) ) {
-                Log.e("Nearby", "is regsiter message: " + registerMessage.teamName );
+                Log.e("Nearby", "is register message: " + registerMessage.teamName );
                 clientNames.add(registerMessage.teamName);
                 client.setName(registerMessage.teamName);
                 mClients.add(client);
