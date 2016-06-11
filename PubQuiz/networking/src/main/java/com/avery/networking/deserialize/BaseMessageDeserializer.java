@@ -44,6 +44,10 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
         }else if( "question".equalsIgnoreCase(messageType) ) {
             QuestionMessage questionMessage = new QuestionMessage();
             questionMessage.question = json.getAsJsonObject().get("question").getAsString();
+            questionMessage.A = json.getAsJsonObject().get("A").getAsString();
+            questionMessage.B = json.getAsJsonObject().get("B").getAsString();
+            questionMessage.C = json.getAsJsonObject().get("C").getAsString();
+            questionMessage.D = json.getAsJsonObject().get("D").getAsString();
             return questionMessage;
         } else {
             message = new BaseMessage();
