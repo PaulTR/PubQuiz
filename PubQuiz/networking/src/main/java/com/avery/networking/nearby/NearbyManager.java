@@ -204,9 +204,11 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onMessageReceived(String endpointId, byte[] payload, boolean isReliable) {
         BaseMessage message = getBaseMessage(new String(payload));
+        Log.e(TAG, "onMessagereceived : " + message);
         if( mIsHost ) {
             mNearbyHostCallback.handleMessage(endpointId, message);
         } else {
+            Log.e(TAG, "handle message!");
             mNearbyDiscoveryCallback.handleMessage(endpointId, message);
         }
 
@@ -273,12 +275,14 @@ public class NearbyManager implements GoogleApiClient.ConnectionCallbacks,
             @Override
             public void onConnectionResponse(String s, Status status, byte[] bytes) {
                 if( status.isSuccess() ) {
+                    Log.e(TAG, "onConnectionResponse");
                     Nearby.Connections.stopDiscovery(mApiClient, mServiceId);
-                    mNearbyDiscoveryCallback.onConnectionResponse();
 
                     if( !mIsHost ) {
                         mIsConnected = true;
                     }
+
+                    mNearbyDiscoveryCallback.onConnectionResponse();
                 } else {
                     if( !mIsHost ) {
                         mIsConnected = false;

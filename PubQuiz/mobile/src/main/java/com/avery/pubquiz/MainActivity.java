@@ -10,12 +10,15 @@ import com.avery.networking.nearby.Host;
 import com.avery.networking.nearby.NearbyDiscoveryCallback;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
+import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.RegisterResponseMessage;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private NearbyManager mManager;
+    private Client mClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
         mManager = NearbyManager.getInstance();
         mManager.setNearbyDiscoveryCallback(this);
-
     }
 
     @Override
@@ -64,8 +66,11 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         Log.e(TAG, "onEndpoint Found");
         if(host != null) {
             Log.e(TAG, "host : " + host.getEndpointId() + " : " + host.getEndpointName());
-            client.setName("my stupid name");
-            mManager.connectToHost(host, client);
+            if(client != null) {
+                mClient = client;
+                client.setName("my stupid name");
+                mManager.connectToHost(host, client);
+            }
         }
     }
 
@@ -73,5 +78,15 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     public void onConnectionResponse() {
         Log.e(TAG, "onConnectionResponse!");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    @Override
+    public void handleMessage(String endpointId, BaseMessage message) {
+        Log.e(TAG, "handle message!");
+        if(message != null) {
+            if(message instanceof RegisterResponseMessage) {
+                Log.e(TAG, "Register response is successful: " + ((RegisterResponseMessage) message).isSuccessful );
+            }
+        }
     }
 }
