@@ -12,6 +12,7 @@ import com.avery.networking.nearby.NearbyDiscoveryCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.PlayAgainMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.networking.nearby.messages.ScoreUpdateMessage;
@@ -127,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
                 showWinOrLoseFragment((WinnerMessage) message);
             }else if(message instanceof ScoreUpdateMessage) {
                 showScoreUpdateFragment((ScoreUpdateMessage) message);
+            }else if(message instanceof PlayAgainMessage) {
+                showPlayAgainFragment();
             }
         }
     }
@@ -158,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         transaction.replace(R.id.content_frame, scoreUpdateFragment);
         transaction.commit();
+    }
+
+
+    private void showPlayAgainFragment() {
+        //
     }
 
 

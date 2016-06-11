@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.PlayAgainMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
@@ -63,6 +64,8 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
             int score = json.getAsJsonObject().get("score").getAsInt();
             ScoreUpdateMessage scoreUpdateMessage = new ScoreUpdateMessage(teamName, score);
             return scoreUpdateMessage;
+        }else if("play-again".equalsIgnoreCase(messageType)) {
+            return new PlayAgainMessage();
         } else {
             message = new BaseMessage();
             message.messageType = messageType;
