@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.avery.networking.model.Question;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.Utils;
+import com.avery.pubquiz.activities.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,7 +46,7 @@ public class QuizQuestionFragment extends Fragment {
 
     private void loadQuestion() {
         mQuestionTextView.setText(mQuestions.get(0).getQuestion());
-
+        ((MainActivity)getActivity()).sendQuestion( mQuestions.get(0) );
     }
 
     private void loadData() {

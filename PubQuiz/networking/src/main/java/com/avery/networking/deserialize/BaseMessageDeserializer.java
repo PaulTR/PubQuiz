@@ -3,6 +3,7 @@ package com.avery.networking.deserialize;
 import android.util.Log;
 
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -30,7 +31,11 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
             RegisterMessage registerMessage = new RegisterMessage();
             registerMessage.teamName = json.getAsJsonObject().get("teamName").getAsString();
             return registerMessage;
-        }else {
+        } else if( "question".equalsIgnoreCase(messageType) ) {
+            QuestionMessage questionMessage = new QuestionMessage();
+            questionMessage.question = json.getAsJsonObject().get("question").getAsString();
+            return questionMessage;
+        } else {
             message = new BaseMessage();
             message.messageType = messageType;
             return message;

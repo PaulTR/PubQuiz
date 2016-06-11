@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.avery.networking.model.Question;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
@@ -35,8 +37,8 @@ public class MainActivity extends Activity implements NearbyHostCallback {
         manager.initialize(this);
     }
 
-    public void sendQuestion() {
-
+    public void sendQuestion(Question question) {
+        NearbyManager.getInstance().sendQuestion(mClients, new QuestionMessage(question.getQuestion()));
     }
 
     private void initFragment() {
