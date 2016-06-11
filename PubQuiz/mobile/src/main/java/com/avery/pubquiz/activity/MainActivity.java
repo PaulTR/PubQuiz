@@ -4,15 +4,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.Host;
 import com.avery.networking.nearby.NearbyDiscoveryCallback;
-import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
@@ -150,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         WinOrLose winOrLoseFragment = WinOrLose.getInstance(mClient, message);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, winOrLoseFragment);
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        transaction.replace(R.id.content_frame, winOrLoseFragment);
         transaction.commit();
     }
 
@@ -159,8 +155,8 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         ScoreUpdate scoreUpdateFragment = ScoreUpdate.getInstance(message);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, scoreUpdateFragment);
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        transaction.replace(R.id.content_frame, scoreUpdateFragment);
         transaction.commit();
     }
 
