@@ -15,6 +15,7 @@ import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback {
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
             }else if(message instanceof QuestionMessage) {
                 answerButton.setVisibility(View.VISIBLE);
                 mQuestionText.setVisibility(View.VISIBLE);
-                mQuestionText.setText(((QuestionMessage) message).getQuestion());
+                mQuestionText.setText(((QuestionMessage) message).question);
             }
         }
     }
