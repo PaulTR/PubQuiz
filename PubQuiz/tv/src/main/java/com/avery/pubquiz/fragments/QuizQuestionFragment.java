@@ -108,6 +108,18 @@ public class QuizQuestionFragment extends Fragment {
     }
 
     private void loadImageQuestions() {
+
+        mImageBlocker1.setVisibility(View.VISIBLE);
+        mImageBlocker2.setVisibility(View.VISIBLE);
+        mImageBlocker3.setVisibility(View.VISIBLE);
+        mImageBlocker4.setVisibility(View.VISIBLE);
+        mImageBlocker5.setVisibility(View.VISIBLE);
+        mImageBlocker6.setVisibility(View.VISIBLE);
+        mImageBlocker7.setVisibility(View.VISIBLE);
+        mImageBlocker8.setVisibility(View.VISIBLE);
+        mImageBlocker9.setVisibility(View.VISIBLE);
+
+        mTimerTextView.setVisibility(View.GONE);
         imageBlocks.add(1);
         imageBlocks.add(2);
         imageBlocks.add(3);
@@ -156,6 +168,10 @@ public class QuizQuestionFragment extends Fragment {
                     @Override
                     public void onResponse(Call<BeerResult> call, Response<BeerResult> response) {
                         Beer beer = response.body().getBeer();
+                        if( !isAdded() ) {
+                            return;
+                        }
+
                         Glide.with(getActivity()).load(beer.getLabelImage().getDesktop2x()).into(mBeerImage);
                         Question question = new Question();
                         question.setQuestionType("multiple-choice");
@@ -216,7 +232,76 @@ public class QuizQuestionFragment extends Fragment {
     }
 
     private void loadBeerQuestions() {
+        AveryNetworkAdapter.getInstance().getService().getBeers().enqueue(new Callback<BeerList>() {
+            @Override
+            public void onResponse(Call<BeerList> call, Response<BeerList> response) {
+                mBeerList = response.body();
 
+                mTimerTextView.setVisibility(View.VISIBLE);
+                mCurrentQuestion = mQuestions.get(((new Random()).nextInt(mQuestions.size())));
+                mCurrentQuestion.setQuestionType("multiple-choice");
+                mCurrentTime = mTimePerQuestion;
+                mTimerTextView.setText(String.valueOf(mCurrentTime));
+                mMultipleChoiceContainer.setVisibility(View.VISIBLE);
+                mImageQuestionContainer.setVisibility(View.GONE);
+
+                List<Beer> beers = response.body().beers;
+                Random random = new Random();
+                Beer answerBeer = response.body().beers.get(random.nextInt(response.body().beers.size()));
+                mCurrentQuestion.setQuestion("What is the ABV of " + answerBeer.getName() + "?");
+
+                Random randomAnswer = new Random();
+                switch( randomAnswer.nextInt(4) ) {
+                    case 0: {
+                        mCurrentQuestion.setA(answerBeer.getAbv());
+                        mCurrentQuestion.setAnswer("A");
+                        mCurrentQuestion.setB(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setC(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setD(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        break;
+                    }
+                    case 1: {
+                        mCurrentQuestion.setB(answerBeer.getAbv());
+                        mCurrentQuestion.setAnswer("B");
+                        mCurrentQuestion.setA(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setC(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setD(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        break;
+                    }
+                    case 2: {
+                        mCurrentQuestion.setC(answerBeer.getAbv());
+                        mCurrentQuestion.setAnswer("C");
+                        mCurrentQuestion.setB(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setA(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setD(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        break;
+                    }
+                    case 3: {
+                        mCurrentQuestion.setD(answerBeer.getAbv());
+                        mCurrentQuestion.setAnswer("D");
+                        mCurrentQuestion.setB(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setC(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        mCurrentQuestion.setA(mBeerList.beers.get(randomAnswer.nextInt(beers.size())).getAbv());
+                        break;
+                    }
+                }
+
+                mQuestionTextView.setText(mCurrentQuestion.getQuestion());
+                mAnswerTextViewA.setText(mCurrentQuestion.getA());
+                mAnswerTextViewB.setText(mCurrentQuestion.getB());
+                mAnswerTextViewC.setText(mCurrentQuestion.getC());
+                mAnswerTextViewD.setText(mCurrentQuestion.getD());
+
+                ((MainActivity) getActivity()).sendQuestion(mCurrentQuestion);
+                new QuestionTimerTask().execute();
+
+            }
+
+            @Override
+            public void onFailure(Call<BeerList> call, Throwable t) {
+
+            }
+        });
     }
 
     private void initViews(View view) {
@@ -253,19 +338,20 @@ public class QuizQuestionFragment extends Fragment {
     }
 
     private void loadMultipleChoiceQuestion() {
-        mCurrentQuestion = mQuestions.get(((new Random()).nextInt(10)));
+        mTimerTextView.setVisibility(View.VISIBLE);
+        mCurrentQuestion = mQuestions.get(((new Random()).nextInt(mQuestions.size())));
         mCurrentQuestion.setQuestionType("multiple-choice");
+        mCurrentTime = mTimePerQuestion;
+        mTimerTextView.setText(String.valueOf(mCurrentTime));
+        mMultipleChoiceContainer.setVisibility(View.VISIBLE);
+        mImageQuestionContainer.setVisibility(View.GONE);
+
         mQuestionTextView.setText(mCurrentQuestion.getQuestion());
         mAnswerTextViewA.setText(mCurrentQuestion.getA());
         mAnswerTextViewB.setText(mCurrentQuestion.getB());
         mAnswerTextViewC.setText(mCurrentQuestion.getC());
         mAnswerTextViewD.setText(mCurrentQuestion.getD());
-        mCurrentTime = mTimePerQuestion;
 
-        mMultipleChoiceContainer.setVisibility(View.VISIBLE);
-        mImageQuestionContainer.setVisibility(View.GONE);
-
-        mTimerTextView.setText(String.valueOf(mCurrentTime));
 
         ((MainActivity) getActivity()).sendQuestion(mCurrentQuestion);
 
@@ -282,15 +368,18 @@ public class QuizQuestionFragment extends Fragment {
 
         Random random = new Random();
         int selection = random.nextInt(5);
+
+
         if( selection == 0 ) {
             loadImageQuestions();
         }
         else {
-            loadMultipleChoiceQuestion();
+            if( random.nextBoolean() ) {
+                loadMultipleChoiceQuestion();
+            } else {
+                loadBeerQuestions();
+            }
         }
-
-        //Image question
-
     }
 
     private void loadJsonQuestions() {
