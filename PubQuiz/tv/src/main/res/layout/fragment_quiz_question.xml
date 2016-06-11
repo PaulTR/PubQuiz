@@ -291,7 +291,8 @@
             android:layout_below="@+id/tv_correct_teams"
             android:textColor="@android:color/white"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal">
 
             <TextView
                 android:id="@+id/tv_team_1"
