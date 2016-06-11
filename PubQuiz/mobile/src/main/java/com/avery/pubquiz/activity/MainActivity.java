@@ -180,6 +180,12 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     private void playAgain(boolean playAgain) {
         PlayAgainMessage message = new PlayAgainMessage(playAgain);
         NearbyManager.getInstance().sendIsPlaying(mHost, message);
+
+        if(playAgain) {
+            startGameOver();
+        }else {
+            closeApplication();
+        }
     }
 
 
