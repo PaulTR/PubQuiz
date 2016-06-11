@@ -42,6 +42,8 @@ public class WinOrLose extends Fragment implements View.OnClickListener{
     private Button mYesButton;
     private Button mNoButton;
 
+    private WinOrLoseActions mWinOrLoseActions;
+
 
     @Nullable
     @Override
@@ -81,6 +83,24 @@ public class WinOrLose extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+
+        if(mWinOrLoseActions == null)
+            return;
+
         int id = v.getId();
+        if(id == R.id.yes_button) {
+            mWinOrLoseActions.onPlayAgain(true);
+        }else if(id == R.id.no_button) {
+            mWinOrLoseActions.onPlayAgain(false);
+        }
+    }
+
+    public void setWinOrLoseActions(WinOrLoseActions listener) {
+        mWinOrLoseActions = listener;
+    }
+
+
+    public interface WinOrLoseActions {
+        void onPlayAgain(boolean playAgain);
     }
 }

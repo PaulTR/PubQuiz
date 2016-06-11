@@ -25,7 +25,8 @@ import com.avery.pubquiz.fragment.WinOrLose;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback,
         LoadingFragment.LoadingFragmentActions,
-        SelectAnswer.SelectAnswerActions {
+        SelectAnswer.SelectAnswerActions,
+        WinOrLose.WinOrLoseActions {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
     private void showWinOrLoseFragment(WinnerMessage message) {
         WinOrLose winOrLoseFragment = WinOrLose.getInstance(mClient, message);
-
+        winOrLoseFragment.setWinOrLoseActions(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         transaction.replace(R.id.content_frame, winOrLoseFragment);
@@ -177,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     }
 
 
-    private void playAgain(boolean playAgain) {
+    @Override
+    public void onPlayAgain(boolean playAgain) {
         PlayAgainMessage message = new PlayAgainMessage(playAgain);
         NearbyManager.getInstance().sendIsPlaying(mHost, message);
 
