@@ -128,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
                 showWinOrLoseFragment((WinnerMessage) message);
             }else if(message instanceof ScoreUpdateMessage) {
                 showScoreUpdateFragment((ScoreUpdateMessage) message);
-            }else if(message instanceof PlayAgainMessage) {
-                showPlayAgainFragment();
             }
         }
     }
@@ -164,11 +162,6 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     }
 
 
-    private void showPlayAgainFragment() {
-        //
-    }
-
-
     @Override
     public void onSetTeamName(String teamName) {
         mClient.setName(teamName);
@@ -181,5 +174,10 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         message.answer = answer;
         Log.e(TAG, "answer selected: " + answer);
         mManager.sendAnswer(mHost, message);
+    }
+
+
+    public void closeApplication() {
+        this.finishAffinity();
     }
 }

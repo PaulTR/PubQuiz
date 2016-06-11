@@ -5,7 +5,10 @@ package com.avery.networking.nearby.messages;
  */
 public class PlayAgainMessage extends BaseMessage {
 
-    public PlayAgainMessage() {
+    public boolean isPlaying = false;
+
+    public PlayAgainMessage(boolean isPlaying) {
         messageType = "play-again";
+        this.isPlaying = isPlaying;
     }
 }

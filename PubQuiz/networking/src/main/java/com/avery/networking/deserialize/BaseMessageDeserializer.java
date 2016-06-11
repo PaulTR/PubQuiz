@@ -65,7 +65,8 @@ public class BaseMessageDeserializer implements JsonDeserializer<BaseMessage> {
             ScoreUpdateMessage scoreUpdateMessage = new ScoreUpdateMessage(teamName, score);
             return scoreUpdateMessage;
         }else if("play-again".equalsIgnoreCase(messageType)) {
-            return new PlayAgainMessage();
+            boolean isPlaying = json.getAsJsonObject().get("isPlaying").getAsBoolean();
+            return new PlayAgainMessage(isPlaying);
         } else {
             message = new BaseMessage();
             message.messageType = messageType;
