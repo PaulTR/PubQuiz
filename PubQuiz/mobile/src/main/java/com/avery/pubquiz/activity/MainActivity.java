@@ -177,7 +177,14 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
     }
 
 
+    private void playAgain(boolean playAgain) {
+        PlayAgainMessage message = new PlayAgainMessage(playAgain);
+        NearbyManager.getInstance().sendIsPlaying(mHost, message);
+    }
+
+
     private void startGameOver() {
+
         mLoadingFragment.setWaitingForQuestion();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
