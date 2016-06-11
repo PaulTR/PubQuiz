@@ -19,6 +19,7 @@ import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragment.LoadingFragment;
+import com.avery.pubquiz.fragment.SelectAnswer;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback,
         LoadingFragment.LoadingFragmentActions {
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
 
     private LoadingFragment mLoadingFragment;
+    private SelectAnswer mSelectAnswerFragment;
 
 
     @Override
@@ -42,8 +44,9 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         mManager.setNearbyDiscoveryCallback(this);
 
         mLoadingFragment = new LoadingFragment();
+        mLoadingFragment.setLoadingFragmentActions(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mLoadingFragment).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mLoadingFragment).commit();
     }
 
     @Override
@@ -105,12 +108,22 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
                 boolean successful = ((RegisterResponseMessage) message).isSuccessful;
                 if(successful) {
                     //show waiting for questions screen
+                    mLoadingFragment.setWaitingForQuestion();
+                }else {
+                    mLoadingFragment.setTeamNameNotAvailable();
                 }
             }else if(message instanceof QuestionMessage) {
                 //show question screen
+                showQuestionFragment((QuestionMessage) message);
             }
         }
     }
+
+    private void showQuestionFragment(QuestionMessage message) {
+        SelectAnswer selectAnswerFragment = SelectAnswer.getInstance(message);
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, selectAnswerFragment).commit();
+    }
+
 
     @Override
     public void onSetTeamName(String teamName) {

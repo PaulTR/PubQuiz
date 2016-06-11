@@ -2,7 +2,9 @@ package com.avery.networking.nearby.messages;
 
 import com.avery.networking.model.Question;
 
-public class QuestionMessage extends BaseMessage {
+import java.io.Serializable;
+
+public class QuestionMessage extends BaseMessage implements Serializable {
 
     public String question;
     public String A;
