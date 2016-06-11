@@ -2,7 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/avery_tab"
+        android:layout_width="320dp"
+        android:layout_height="220dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/avery_tab"/>
 
     <TextView
         android:id="@+id/tv_form_teams"
@@ -10,8 +17,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:textColor="@android:color/white"
         android:layout_centerInParent="true"
-        android:text="Looking for teams..."/>
+        android:textStyle="bold"
+        android:textSize="32sp"
+        android:fontFamily="serif"
+        android:text="Waiting for teams..."/>
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -20,6 +31,8 @@
         android:indeterminate="true"
         android:minHeight="24dip"
         android:maxHeight="24dip"
+        style="?android:progressBarStyleLarge"
+        android:indeterminateTint="@color/colorAccent"
         android:layout_below="@id/tv_form_teams"/>
 
 </RelativeLayout>

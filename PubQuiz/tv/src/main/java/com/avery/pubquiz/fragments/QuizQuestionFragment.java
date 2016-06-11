@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,9 +34,13 @@ public class QuizQuestionFragment extends Fragment {
     private int mCurrentTime;
 
 
-    private RelativeLayout mQuestionContainer;
+    private LinearLayout mQuestionContainer;
     private TextView mQuestionTextView;
     private TextView mTimerTextView;
+    private TextView mAnswerTextViewA;
+    private TextView mAnswerTextViewB;
+    private TextView mAnswerTextViewC;
+    private TextView mAnswerTextViewD;
 
     private RelativeLayout mCorrectTeamsContainer;
     private TextView mTeam1;
@@ -70,9 +75,13 @@ public class QuizQuestionFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        mQuestionContainer = (RelativeLayout) view.findViewById(R.id.container_question);
+        mQuestionContainer = (LinearLayout) view.findViewById(R.id.container_question);
         mQuestionTextView = (TextView) view.findViewById(R.id.tv_question);
         mTimerTextView = (TextView) view.findViewById(R.id.tv_time);
+        mAnswerTextViewA = (TextView) view.findViewById(R.id.answer_a);
+        mAnswerTextViewB = (TextView) view.findViewById(R.id.answer_b);
+        mAnswerTextViewC = (TextView) view.findViewById(R.id.answer_c);
+        mAnswerTextViewD = (TextView) view.findViewById(R.id.answer_d);
 
         mCorrectTeamsContainer = (RelativeLayout) view.findViewById(R.id.container_correct_teams);
         mTeam1 = (TextView) view.findViewById(R.id.tv_team_1);
@@ -93,9 +102,15 @@ public class QuizQuestionFragment extends Fragment {
         mCorrectTeamsContainer.setVisibility(View.GONE);
         mEveryonesWrongContainer.setVisibility(View.GONE);
         mCurrentQuestion = mQuestions.get( ((new Random()).nextInt(10)) );
+
         mQuestionTextView.setText(mCurrentQuestion.getQuestion());
+        mAnswerTextViewA.setText(mCurrentQuestion.getA());
+        mAnswerTextViewB.setText(mCurrentQuestion.getB());
+        mAnswerTextViewC.setText(mCurrentQuestion.getC());
+        mAnswerTextViewD.setText(mCurrentQuestion.getD());
+
         mTimerTextView.setText(String.valueOf(mCurrentTime));
-        ((MainActivity)getActivity()).sendQuestion( mCurrentQuestion );
+        ((MainActivity) getActivity()).sendQuestion( mCurrentQuestion );
         new QuestionTimerTask().execute();
     }
 
@@ -104,6 +119,10 @@ public class QuizQuestionFragment extends Fragment {
         Gson gson = new Gson();
         Type collection = new TypeToken<ArrayList<Question>>(){}.getType();
         mQuestions = gson.fromJson( json, collection );
+    }
+
+    public void showWinner() {
+        ((MainActivity) getActivity()).showWinner();
     }
 
     public void answerReceived(Client client, AnswerMessage message) {
@@ -167,7 +186,9 @@ public class QuizQuestionFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            displayCorrectTeams();
+            if( !(mInCorrectTeams.size() + mCorrectTeams.size() == ((MainActivity) getActivity()).getNumberOfTeams() ) ) {
+                displayCorrectTeams();
+            }
         }
     }
 
@@ -188,7 +209,8 @@ public class QuizQuestionFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if( mCurrentQuestionNumber >= mMaxNumberOfQuestions ) {
-                ((MainActivity) getActivity()).showWinner();
+                Log.e("Quiz", "mCurrentQuestionNumber: " + mCurrentQuestionNumber );
+                showWinner();
             } else {
                 loadQuestion();
             }
