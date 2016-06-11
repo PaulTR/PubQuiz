@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.avery.networking.flowmeter.TapFlowManager;
 import com.avery.networking.model.Question;
-import com.avery.networking.model.beer.Beer;
 import com.avery.networking.model.tap.TapBeer;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.messages.AnswerMessage;
@@ -28,7 +27,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
 
     private float mAmountRemaining = 0.0f;
 
-    private HashMap<Client, Integer> receivedAnswers = new HashMap<>();
+    private HashMap<Client, Float> receivedAnswers = new HashMap<>();
 
     private TextView mTieBreakerTextView;
 
@@ -105,7 +104,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
     }
 
     public void answerReceived(Client client, AnswerMessage answer ) {
-        receivedAnswers.put(client, Integer.valueOf(answer.answer));
+        receivedAnswers.put(client, Float.valueOf(answer.answer));
         if( ((MainActivity)getActivity()).getNumberOfTeams() == receivedAnswers.size() ) {
             determineWinner();
         }
@@ -115,7 +114,7 @@ public class TieBreakerFragment extends Fragment implements TapFlowManager.TapFl
         float guessDistance = 0.0f;
         Client closestGuesser = null;
 
-        for (Map.Entry<Client, Integer> entry : receivedAnswers.entrySet()) {
+        for (Map.Entry<Client, Float> entry : receivedAnswers.entrySet()) {
             if( Math.abs( (mAmountRemaining - entry.getValue() ) ) < guessDistance ) {
                 guessDistance = Math.abs(mAmountRemaining - entry.getValue());
                 closestGuesser = entry.getKey();
