@@ -1,23 +1,15 @@
 package com.avery.pubquiz;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.avery.networking.model.beer.Beer;
-import com.avery.networking.model.beer.BeerList;
-import com.avery.networking.model.beer.BeerResult;
 import com.avery.networking.nearby.Client;
 import com.avery.networking.nearby.NearbyDiscoveryCallback;
 import com.avery.networking.nearby.NearbyHostCallback;
 import com.avery.networking.nearby.NearbyManager;
-import com.avery.networking.services.AveryNetworkAdapter;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NearbyHostCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -32,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
         mManager.initialize(this);
 
     }
+        /*
+        Call<BeerList> call = AveryNetworkAdapter.getInstance().getService().getBeers();
+        call.enqueue(new Callback<BeerList>() {
+        */
 
 
     @Override
@@ -71,16 +67,30 @@ public class MainActivity extends AppCompatActivity {
             public void onAdvertisingFailed(int statusCode) {
                 Log.e(TAG, "onadvertising failed : " + statusCode);
             }
+        });
 
-            @Override
-            public void onConnectionAccepted(Client client) {
-                Log.e(TAG, "onconnectionaccpeted : " + client.getName());
-            }
+        */
 
-            @Override
-            public void onConnectionFailed(int statusCode) {
-                Log.e(TAG, "on connection failed : " + statusCode);
-            }
-        });*/
+        NearbyManager.getInstance(this).startAdvertising("avery", this);
+    }
+
+    @Override
+    public void onAdvertisingSuccess() {
+
+    }
+
+    @Override
+    public void onAdvertisingFailed(int statusCode) {
+
+    }
+
+    @Override
+    public void onConnectionAccepted(Client client) {
+        Log.e(TAG, "onconnectionaccpeted : " + client.getName());
+    }
+
+    @Override
+    public void onConnectionFailed(int statusCode) {
+        Log.e(TAG, "on connection failed : " + statusCode);
     }
 }
