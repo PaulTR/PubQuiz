@@ -12,6 +12,7 @@ import com.avery.networking.nearby.NearbyDiscoveryCallback;
 import com.avery.networking.nearby.NearbyManager;
 import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
+import com.avery.networking.nearby.messages.PlayAgainMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
 import com.avery.networking.nearby.messages.ScoreUpdateMessage;
@@ -173,5 +174,10 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
         message.answer = answer;
         Log.e(TAG, "answer selected: " + answer);
         mManager.sendAnswer(mHost, message);
+    }
+
+
+    public void closeApplication() {
+        this.finishAffinity();
     }
 }
