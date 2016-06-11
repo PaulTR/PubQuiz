@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements NearbyHostCallback {
     }
 
     public void sendQuestion(Question question) {
-        NearbyManager.getInstance().sendQuestion(mClients, new QuestionMessage(question.getQuestion()));
+        NearbyManager.getInstance().sendQuestion(mClients, new QuestionMessage(question));
     }
 
     private void initFragment() {
