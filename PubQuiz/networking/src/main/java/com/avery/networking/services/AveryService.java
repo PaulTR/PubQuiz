@@ -1,6 +1,5 @@
 package com.avery.networking.services;
 
-import com.avery.networking.model.beer.Beer;
 import com.avery.networking.model.beer.BeerList;
 import com.avery.networking.model.beer.BeerResult;
 
