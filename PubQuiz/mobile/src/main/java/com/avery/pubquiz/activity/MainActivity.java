@@ -18,9 +18,13 @@ import com.avery.networking.nearby.messages.AnswerMessage;
 import com.avery.networking.nearby.messages.BaseMessage;
 import com.avery.networking.nearby.messages.QuestionMessage;
 import com.avery.networking.nearby.messages.RegisterResponseMessage;
+import com.avery.networking.nearby.messages.ScoreUpdateMessage;
+import com.avery.networking.nearby.messages.WinnerMessage;
 import com.avery.pubquiz.R;
 import com.avery.pubquiz.fragment.LoadingFragment;
+import com.avery.pubquiz.fragment.ScoreUpdate;
 import com.avery.pubquiz.fragment.SelectAnswer;
+import com.avery.pubquiz.fragment.WinOrLose;
 
 public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCallback,
         LoadingFragment.LoadingFragmentActions,
@@ -123,6 +127,10 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
             }else if(message instanceof QuestionMessage) {
                 //show question screen
                 showQuestionFragment((QuestionMessage) message);
+            }else if(message instanceof WinnerMessage) {
+                showWinOrLoseFragment((WinnerMessage) message);
+            }else if(message instanceof ScoreUpdateMessage) {
+                showScoreUpdateFragment((ScoreUpdateMessage) message);
             }
         }
     }
@@ -133,6 +141,25 @@ public class MainActivity extends AppCompatActivity implements NearbyDiscoveryCa
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, selectAnswerFragment);
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        transaction.commit();
+    }
+
+
+    private void showWinOrLoseFragment(WinnerMessage message) {
+        WinOrLose winOrLoseFragment = WinOrLose.getInstance(mClient, message);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, winOrLoseFragment);
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        transaction.commit();
+    }
+
+    private void showScoreUpdateFragment(ScoreUpdateMessage message) {
+        ScoreUpdate scoreUpdateFragment = ScoreUpdate.getInstance(message);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, scoreUpdateFragment);
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         transaction.commit();
     }

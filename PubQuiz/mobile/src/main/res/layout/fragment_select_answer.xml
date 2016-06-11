@@ -16,6 +16,8 @@
         android:gravity="center_horizontal"
         android:paddingBottom="42dp"
         android:textAppearance="?android:textAppearanceLarge"
+        android:textStyle="bold"
+        android:textAllCaps="true"
         android:fontFamily="serif"
         android:textColor="@android:color/white"
         android:text="Buttonz n' shit"/>

@@ -14,7 +14,7 @@
 
 
     <TextView
-        android:id="@+id/win_lose_text"
+        android:id="@+id/score_update_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/avery_tab"
@@ -26,6 +26,6 @@
         android:textStyle="bold"
         android:textAllCaps="true"
         android:gravity="center_horizontal"
-        android:text="Congratulations, You Win!"/>
+        android:text="You have 20 points"/>
 
 </RelativeLayout>
